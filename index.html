@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
@@ -60,12 +61,14 @@
 </head>
 <body class="flex flex-col md:flex-row min-h-screen bg-surface">
 
+  <!-- Auth Container -->
   <div id="authContainer" class="flex-1 flex flex-col items-center justify-center min-h-screen p-4 w-full" style="display: none;">
     <div class="absolute top-4 right-4 flex gap-2">
       <button class="px-3 py-1.5 rounded-lg font-bold text-sm transition-colors text-primary bg-primary/10 lang-toggle" onclick="setLang('en')" id="btnEn">EN</button>
       <button class="px-3 py-1.5 rounded-lg font-bold text-sm transition-colors text-on-surface-variant hover:bg-surface-container lang-toggle" onclick="setLang('th')" id="btnTh">TH</button>
     </div>
 
+    <!-- Login Card -->
     <div id="loginCard" class="bg-surface-container-lowest rounded-2xl shadow-lg border border-outline-variant p-8 w-full max-w-md">
       <div class="flex justify-center mb-6">
         <div class="w-16 h-16 bg-primary flex items-center justify-center rounded-2xl text-white shadow-lg shadow-primary/30">
@@ -87,15 +90,63 @@
             <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline cursor-pointer hover:text-primary" onclick="togglePwd('loginPwd', this)">visibility_off</span>
           </div>
         </div>
-        <div class="flex items-center gap-2 pt-2 pb-4">
-          <input type="checkbox" id="rememberMe" class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4">
-          <label for="rememberMe" class="text-sm text-on-surface-variant cursor-pointer font-body-md" data-i18n="rememberMe">Remember me</label>
+        <div class="flex justify-between items-center pt-2 pb-4">
+          <div class="flex items-center gap-2">
+             <input type="checkbox" id="rememberMe" class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4">
+             <label for="rememberMe" class="text-sm text-on-surface-variant cursor-pointer font-body-md" data-i18n="rememberMe">Remember me</label>
+          </div>
         </div>
         <button type="submit" id="btnLoginBtn" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all shadow-md shadow-primary/20 font-body-md" data-i18n="loginBtn">Log in</button>
+        <div class="text-center mt-4">
+          <p class="text-sm text-on-surface-variant"><span data-i18n="noAccount">Don't have an account?</span> <a href="#" onclick="toggleAuth()" class="text-primary font-bold hover:underline" data-i18n="signUp">Sign up</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Register Card -->
+    <div id="registerCard" class="bg-surface-container-lowest rounded-2xl shadow-lg border border-outline-variant p-8 w-full max-w-md" style="display: none;">
+      <div class="flex justify-center mb-6">
+        <div class="w-16 h-16 bg-primary flex items-center justify-center rounded-2xl text-white shadow-lg shadow-primary/30">
+          <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">person_add</span>
+        </div>
+      </div>
+      <h3 class="text-center text-2xl font-black text-on-surface mb-2 font-headline-md" data-i18n="signUp">Sign up</h3>
+      
+      <form id="regForm" onsubmit="event.preventDefault(); doRegister();" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+           <div>
+             <label class="text-xs font-bold text-on-surface-variant uppercase mb-1 block" data-i18n="firstName">First Name</label>
+             <input type="text" id="regFname" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 outline-none font-body-md" required>
+           </div>
+           <div>
+             <label class="text-xs font-bold text-on-surface-variant uppercase mb-1 block" data-i18n="lastName">Surname</label>
+             <input type="text" id="regLname" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 outline-none font-body-md" required>
+           </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase mb-1 block" data-i18n="userId">User ID / Email</label>
+          <input type="text" id="regId" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 outline-none font-body-md" required>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase mb-1 block" data-i18n="password">Password</label>
+          <div class="relative">
+            <input type="password" id="regPwd" class="w-full pl-4 pr-12 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 outline-none font-body-md" required>
+            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline cursor-pointer" onclick="togglePwd('regPwd', this)">visibility_off</span>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-on-surface-variant uppercase mb-1 block" data-i18n="selectBranch">Select Branch</label>
+          <select id="regBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 outline-none font-body-md" required></select>
+        </div>
+        <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl mt-4" data-i18n="signUp">Sign up</button>
+        <div class="text-center mt-4">
+          <p class="text-sm text-on-surface-variant"><span data-i18n="haveAccount">Have an account?</span> <a href="#" onclick="toggleAuth()" class="text-primary font-bold hover:underline" data-i18n="loginBtn">Log in</a></p>
+        </div>
       </form>
     </div>
   </div>
 
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full z-50 bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -140,6 +191,7 @@
     </div>
   </aside>
 
+  <!-- Mobile Bottom Nav -->
   <div id="mobileNavWrapper" style="display:none;">
     <nav class="flex md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant z-40 justify-around items-center pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pt-1">
       <a class="mobile-nav-btn flex flex-col items-center p-2 text-primary transition-colors cursor-pointer" onclick="switchTab('viewInbound', this, true)"><span class="material-symbols-outlined">input</span><span class="text-[10px] font-bold mt-1">Inbound</span></a>
@@ -268,7 +320,9 @@
         </div>
       </div>
       
-      <input type="file" id="poItemCameraInput" accept="image/*" style="display:none;" onchange="processPOItemPhoto(event)">
+      <!-- Hidden Camera Inputs for PO -->
+      <input type="file" id="poItemCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processPOItemPhoto(event)">
+      <input type="file" id="poItemGalleryInput" accept="image/*" style="display:none;" onchange="processPOItemPhoto(event)">
 
       <!-- ================= SCAN & ACTION ================= -->
       <div id="viewAction" class="view-section">
@@ -327,15 +381,20 @@
             <div id="autocompleteBox" class="absolute w-full bg-surface-container-lowest shadow-lg rounded-b-xl hidden z-50 border border-outline-variant"></div>
           </div>
           
-          <input type="file" id="itemCameraInput" accept="image/*" style="display:none;" onchange="processItemPhoto(event)">
+          <!-- Hidden Inputs for Action Camera/Gallery -->
+          <input type="file" id="itemCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processItemPhoto(event)">
+          <input type="file" id="itemGalleryInput" accept="image/*" style="display:none;" onchange="processItemPhoto(event)">
 
           <!-- Photo Step -->
           <div id="pendingPhotoArea" class="p-6 mb-5 rounded-xl bg-primary/5 border border-primary/20 shadow-sm text-center pointer-events-auto" style="display:none;">
              <strong id="photoItemName" class="text-primary text-xl font-headline-md block mb-2"></strong>
              <p class="text-sm text-on-surface-variant mb-5 font-body-md" data-i18n="photoPrompt">Please take a photo for this item.</p>
-             <div class="flex justify-center gap-3">
-                 <button class="bg-primary text-white px-6 py-3 font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 font-body-md" onclick="document.getElementById('itemCameraInput').click()">
+             <div class="flex flex-col sm:flex-row justify-center gap-3">
+                 <button class="bg-primary text-white px-6 py-3 font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 font-body-md" onclick="document.getElementById('itemCameraInput').click()">
                     <span class="material-symbols-outlined">photo_camera</span> <span data-i18n="takePhotoBtn">Take Photo</span>
+                 </button>
+                 <button class="bg-surface-container-high text-primary px-6 py-3 font-bold rounded-xl shadow-sm hover:bg-surface-container-highest active:scale-95 transition-all flex items-center justify-center gap-2 font-body-md" onclick="document.getElementById('itemGalleryInput').click()">
+                    <span class="material-symbols-outlined">image</span> <span>Gallery</span>
                  </button>
                  <button class="bg-error/10 text-error hover:bg-error/20 px-6 py-3 font-bold rounded-xl transition-all font-body-md" onclick="cancelPendingScan()" data-i18n="cancelBtn">Cancel</button>
              </div>
@@ -501,7 +560,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPpcl45-A3n3FPym0sT0rWw942ECitmJWTAuqBaEsuKGiLDYLRoasP9SzBkuNMAMdCHQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybUxZPT9SmjNXDUHzzy5OQ4hIqxAN16X_85UVNbBwblhnjkuBnJKoZH9QtnZ9fCRuk-w/exec";
 
     const i18n = {
       en: {
@@ -513,7 +572,7 @@
         enterQty: "Enter Qty", addBtn: "Add", confirmTx: "Confirm Transaction", stockTitle: "Stock Balance",
         refreshBtn: "Refresh Data", historyTitle: "Activity Log", thSKU: "SKU", thName: "Name", thPoNumber: "PO Number",
         thBranch: "Branch", thQty: "Qty", thReceive: "Receive", thItem: "Item", thUom: "UOM", thUser: "User", poResults: "Pending Receive", receiveAllBtn: "Select All",
-        photoPrompt: "Please take a photo for this item.", takePhotoBtn: "Take Photo", cancelBtn: "Cancel", stockCountTitle: "Stock Count"
+        photoPrompt: "Please take a photo for this item.", takePhotoBtn: "Camera", cancelBtn: "Cancel", stockCountTitle: "Stock Count"
       },
       th: {
         appTitle: "Paper Plane", loginSub: "ระบบจัดการคลังสินค้า", loginBtn: "เข้าสู่ระบบ", signUp: "สมัครสมาชิก", userId: "รหัสพนักงาน / อีเมล", password: "รหัสผ่าน",
@@ -524,7 +583,7 @@
         enterQty: "ระบุจำนวน", addBtn: "เพิ่ม", confirmTx: "ยืนยันทำรายการ", stockTitle: "สต็อกคงเหลือ",
         refreshBtn: "รีเฟรชข้อมูล", historyTitle: "ประวัติทำรายการ", thSKU: "รหัส", thName: "ชื่อสินค้า", thPoNumber: "เลขที่ PO",
         thBranch: "สาขา", thQty: "จำนวน", thReceive: "รับเข้า", thItem: "รายการ", thUom: "หน่วย", thUser: "ผู้ทำรายการ", poResults: "รายการรอรับเข้า", receiveAllBtn: "รับทั้งหมด",
-        photoPrompt: "กรุณาถ่ายรูปหรืออัปโหลดรูปสำหรับสินค้านี้", takePhotoBtn: "เพิ่มรูปภาพ", cancelBtn: "ยกเลิก", stockCountTitle: "นับสต็อก (Stock Count)"
+        photoPrompt: "กรุณาถ่ายรูปหรืออัปโหลดรูปสำหรับสินค้านี้", takePhotoBtn: "ถ่ายรูป", cancelBtn: "ยกเลิก", stockCountTitle: "นับสต็อก (Stock Count)"
       }
     };
 
@@ -1175,7 +1234,12 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const matches = skus.filter(s => String(s.sku).toLowerCase().includes(val.toLowerCase()) || String(s.name).toLowerCase().includes(val.toLowerCase()) || String(s.barcode).includes(val)).slice(0, 6);
+       const searchInput = val.toLowerCase().replace(/\s/g, '');
+       const matches = skus.filter(s => 
+           String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput) || 
+           String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) || 
+           String(s.barcode).includes(val)
+       ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
        matches.forEach(m => {
@@ -1194,35 +1258,34 @@
     function handleScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         setTimeout(() => {
-             const inputEl = getEl('scanInput');
-             if(!inputEl) return;
-             const input = inputEl.value.trim();
-             if(!input) return;
-             
-             setDisplay('autocompleteBox', 'none');
-             const skus = globalData.skus || [];
-             const searchInput = input.toLowerCase().replace(/\s/g, '');
-             let found = skus.find(s => 
-                 String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
-                 String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
-                 String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
-                 String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
-             );
-             
-             if(!found) {
-                Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
-                setValue('scanInput', ''); return;
-             }
-             pendingItem = found;
-             
-             setHtml('photoItemName', `${found.sku} - ${found.name}`);
-             setDisplay('scanInputContainer', 'none');
-             setDisplay('pendingPhotoArea', 'block');
-             setValue('scanInput', '');
-             
-             try { getEl('itemCameraInput').click(); } catch(err) {}
-         }, 50);
+         const inputEl = getEl('scanInput');
+         if(!inputEl) return;
+         const input = inputEl.value.trim();
+         if(!input) return;
+         
+         setDisplay('autocompleteBox', 'none');
+         const skus = globalData.skus || [];
+         const searchInput = input.toLowerCase().replace(/\s/g, '');
+         let found = skus.find(s => 
+             String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
+             String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
+             String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
+             String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
+         );
+         
+         if(!found) {
+            Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
+            setValue('scanInput', ''); return;
+         }
+         pendingItem = found;
+         
+         setHtml('photoItemName', `${found.sku} - ${found.name}`);
+         setDisplay('scanInputContainer', 'none');
+         setDisplay('pendingPhotoArea', 'block');
+         setValue('scanInput', '');
+         
+         // Trigger camera directly upon scan
+         try { getEl('itemCameraInput').click(); } catch(err) {}
       }
     }
 
@@ -1350,7 +1413,12 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const matches = skus.filter(s => String(s.sku).toLowerCase().includes(val.toLowerCase()) || String(s.name).toLowerCase().includes(val.toLowerCase()) || String(s.barcode).includes(val)).slice(0, 6);
+       const searchInput = val.toLowerCase().replace(/\s/g, '');
+       const matches = skus.filter(s => 
+           String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput) || 
+           String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) || 
+           String(s.barcode).includes(val)
+       ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
        matches.forEach(m => {
@@ -1365,37 +1433,35 @@
     function handleCountScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         setTimeout(() => {
-             const inputEl = getEl('countScanInput');
-             if(!inputEl) return;
-             const input = inputEl.value.trim();
-             if(!input) return;
-             
-             setDisplay('countAutocompleteBox', 'none');
-             const skus = globalData.skus || [];
-             const searchInput = input.toLowerCase().replace(/\s/g, '');
-             let found = skus.find(s => 
-                 String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
-                 String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
-                 String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
-                 String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
-             );
-             
-             if(!found) {
-                Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
-                setValue('countScanInput', ''); return;
-             }
-             pendingCountItem = found;
-             
-             setHtml('countItemNameQty', `${found.sku} - ${found.name}`);
-             setHtml('countItemUom', found.uom);
-             setDisplay('countScanInputContainer', 'none');
-             setDisplay('countPendingArea', 'block');
-             setValue('countScanInput', '');
-             setValue('countPendingQty', '');
-             
-             setTimeout(() => { const el = getEl('countPendingQty'); if(el) el.focus(); }, 10);
-         }, 50);
+         const inputEl = getEl('countScanInput');
+         if(!inputEl) return;
+         const input = inputEl.value.trim();
+         if(!input) return;
+         
+         setDisplay('countAutocompleteBox', 'none');
+         const skus = globalData.skus || [];
+         const searchInput = input.toLowerCase().replace(/\s/g, '');
+         let found = skus.find(s => 
+             String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
+             String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
+             String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
+             String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
+         );
+         
+         if(!found) {
+            Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
+            setValue('countScanInput', ''); return;
+         }
+         pendingCountItem = found;
+         
+         setHtml('countItemNameQty', `${found.sku} - ${found.name}`);
+         setHtml('countItemUom', found.uom);
+         setDisplay('countScanInputContainer', 'none');
+         setDisplay('countPendingArea', 'block');
+         setValue('countScanInput', '');
+         setValue('countPendingQty', '');
+         
+         setTimeout(() => { const el = getEl('countPendingQty'); if(el) el.focus(); }, 10);
       }
     }
 
