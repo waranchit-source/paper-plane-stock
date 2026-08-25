@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar (No bottom nav for mobile) -->
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -197,7 +197,7 @@
   <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-8 transition-all duration-300 w-full">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
       <div class="flex items-center gap-4">
-        <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto relative z-50" onclick="toggleSidebar()">
+        <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto" onclick="toggleSidebar()">
           <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex items-center gap-2">
@@ -205,13 +205,14 @@
           <h2 class="font-bold text-xl text-on-surface font-headline-md" id="topBarTitle">Overview</h2>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="handleManualRefresh()" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors flex items-center justify-center pointer-events-auto" title="Refresh Data">
-           <span class="material-symbols-outlined">sync</span>
+      <div class="flex items-center gap-3">
+        <button onclick="handleManualRefresh()" class="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg font-bold text-sm transition-colors flex items-center gap-1 pointer-events-auto shadow-sm" title="Refresh Data">
+           <span class="material-symbols-outlined text-[18px]">sync</span>
+           <span class="hidden md:inline">Refresh</span>
         </button>
         <div class="h-6 w-px bg-outline-variant mx-1"></div>
-        <button class="px-3 py-1.5 rounded-lg font-bold text-sm transition-colors text-primary bg-primary/10 lang-toggle" onclick="setLang('en')" id="btnEn">EN</button>
-        <button class="px-3 py-1.5 rounded-lg font-bold text-sm transition-colors text-on-surface-variant hover:bg-surface-container lang-toggle" onclick="setLang('th')" id="btnTh">TH</button>
+        <button class="px-2 py-1.5 rounded-lg font-bold text-sm transition-colors text-primary bg-primary/10 lang-toggle" onclick="setLang('en')" id="btnEn">EN</button>
+        <button class="px-2 py-1.5 rounded-lg font-bold text-sm transition-colors text-on-surface-variant hover:bg-surface-container lang-toggle" onclick="setLang('th')" id="btnTh">TH</button>
       </div>
     </header>
 
@@ -424,7 +425,7 @@
             </table>
           </div>
           
-          <div class="mt-6">
+          <div class="mt-8 pb-10">
             <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitBulkAction()">
               <span class="material-symbols-outlined">send</span> <span data-i18n="confirmTx">Confirm Transaction</span>
             </button>
@@ -495,7 +496,7 @@
             </table>
           </div>
           
-          <div class="mt-6">
+          <div class="mt-8 pb-10">
             <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitStockCount()">
               <span class="material-symbols-outlined">fact_check</span> <span>Confirm Stock Count</span>
             </button>
@@ -559,14 +560,14 @@
             </select>
           </div>
         </div>
-        <div class="flex flex-col gap-4" id="historyList"></div>
+        <div class="flex flex-col gap-4 pb-10" id="historyList"></div>
       </div>
 
     </div>
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxG3a4Rw1H4Ya7OJ-ePbXT2klTfKNc5Ao6W7g6_g47MkeeY5lfBLqv3hJBqtYNv2p2Hyg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxfD9uRjLQ3t3zHBDQp6MTvGqhKy28eIdbh1ToW_0iRFXB6EcZlNgyk0ccpXATKbQToWQ/exec";
 
     const i18n = {
       en: {
@@ -615,11 +616,13 @@
     }
 
     function isUserAdmin() {
-       return currentUser && (String(currentUser.role).toLowerCase() === 'admin' || currentUser.branch === 'ALL');
+       if (!currentUser) return false;
+       return currentUser.branch === 'ALL' || String(currentUser.role).toUpperCase() === 'ADMIN';
     }
 
     function isUserManager() {
-       return currentUser && String(currentUser.role).toLowerCase() === 'manager';
+       if (!currentUser) return false;
+       return String(currentUser.role).toUpperCase() === 'MANAGER';
     }
 
     function setStorageData(key, value) {
@@ -887,7 +890,7 @@
        function getHtmlFor(br) {
            let filtered = inCharges;
            if (!isAdmin && currentUser && currentUser.branch !== 'ALL') {
-               filtered = inCharges.filter(c => c.branch === currentUser.branch || !c.branch);
+               filtered = inCharges.filter(c => c.branch === currentUser.branch || c.branch === 'ALL' || !c.branch);
            } else if (br) {
                filtered = inCharges.filter(c => c.branch === br || c.branch === 'ALL' || !c.branch);
            }
@@ -1047,7 +1050,7 @@
       switchTab('viewInbound', document.querySelector('.desktop-sidebar .nav-item-btn'));
     }
 
-    function switchTab(tabId, el, isMobileNav = false) {
+    function switchTab(tabId, el) {
       document.querySelectorAll('.view-section').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
       document.querySelectorAll('.desktop-sidebar .nav-item-btn').forEach(b => {
           b.classList.remove('bg-surface-container-high', 'text-primary'); b.classList.add('text-on-surface-variant');
@@ -1173,7 +1176,28 @@
 
     function openPOItemCamera(idx) {
         currentPOPhotoIdx = idx;
-        getEl('poItemCameraInput').click();
+        document.querySelectorAll('.po-rcv-qty').forEach(inp => { 
+            let i = inp.getAttribute('data-idx'); 
+            currentFilterItems[i].inputQty = inp.value; 
+        });
+        
+        Swal.fire({
+           title: currentLang === 'en' ? 'Select Photo Option' : 'เลือกรูปแบบรูปภาพ',
+           showCancelButton: true,
+           showDenyButton: true,
+           confirmButtonText: currentLang === 'en' ? 'Camera' : 'ถ่ายรูป',
+           denyButtonText: currentLang === 'en' ? 'Gallery' : 'เลือกจากคลัง',
+           cancelButtonText: currentLang === 'en' ? 'Cancel' : 'ยกเลิก',
+           confirmButtonColor: '#3525cd',
+           denyButtonColor: '#505f76',
+           cancelButtonColor: '#ba1a1a'
+        }).then((result) => {
+           if (result.isConfirmed) {
+              getEl('poItemCameraInput').click();
+           } else if (result.isDenied) {
+              getEl('poItemGalleryInput').click();
+           }
+        });
     }
 
     async function processPOItemPhoto(event) {
@@ -1324,6 +1348,7 @@
     function handleScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
+         
          const inputEl = getEl('scanInput');
          if(!inputEl) return;
          const input = inputEl.value.trim();
@@ -1351,8 +1376,8 @@
          setDisplay('pendingPhotoArea', 'block');
          setValue('scanInput', '');
          
-         // เด้งกล้องทันทีที่เจอสินค้า
-         getEl('itemCameraInput').click();
+         // Trigger camera directly upon scan synchronously
+         try { getEl('itemCameraInput').click(); } catch(err) {}
       }
     }
 
@@ -1707,7 +1732,6 @@
           }
 
           let canDelete = false;
-          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
