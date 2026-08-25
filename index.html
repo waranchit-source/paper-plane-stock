@@ -192,9 +192,9 @@
     </div>
   </aside>
 
-  <!-- Mobile Bottom Nav -->
-  <div id="mobileNavWrapper" style="display:none;">
-    <nav class="flex md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant z-40 justify-around items-center pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pt-1">
+  <!-- Mobile Bottom Nav with expanded padding to prevent overlap -->
+  <div id="mobileNavWrapper" style="display:none;" class="z-[100] relative">
+    <nav class="flex md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant justify-around items-center pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pt-1">
       <a class="mobile-nav-btn flex flex-col items-center p-2 text-primary transition-colors cursor-pointer" onclick="switchTab('viewInbound', this, true)"><span class="material-symbols-outlined">input</span><span class="text-[10px] font-bold mt-1">Inbound</span></a>
       <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewAction', this, true)"><span class="material-symbols-outlined">qr_code_scanner</span><span class="text-[10px] font-bold mt-1">Scan</span></a>
       <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewStockCount', this, true)"><span class="material-symbols-outlined">fact_check</span><span class="text-[10px] font-bold mt-1">Count</span></a>
@@ -203,7 +203,7 @@
     </nav>
   </div>
 
-  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-24 md:pb-0 transition-all duration-300 w-full">
+  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-32 md:pb-8 transition-all duration-300 w-full">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
       <div class="flex items-center gap-4">
         <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto" onclick="toggleSidebar()">
@@ -269,7 +269,7 @@
                   <thead>
                     <tr class="bg-surface-container-high/30">
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thPoNumber">PO Number</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
+                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Item Name</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-right" data-i18n="thQty">Remaining</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider w-32" data-i18n="thReceive">Receive</th>
@@ -570,7 +570,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybUxZPT9SmjNXDUHzzy5OQ4hIqxAN16X_85UVNbBwblhnjkuBnJKoZH9QtnZ9fCRuk-w/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvPpkuzKWkjgSTfgx7X_AR2gVvg-jAweAs8QzLJqzXR6YTEmqPed9xOh55ildgyec9BQ/exec";
 
     const i18n = {
       en: {
@@ -879,8 +879,8 @@
       const defaultOpt = `<option value="">${i18n[currentLang].selectBranch}</option>`;
       
       let filteredInCharges = inCharges;
-      if (currentUser && currentUser.branch !== 'ALL') {
-          filteredInCharges = inCharges.filter(c => c.branch === currentUser.branch || c.branch === 'ALL' || c.branch === '');
+      if (currentUser && currentUser.role !== 'Admin' && currentUser.branch !== 'ALL') {
+          filteredInCharges = inCharges.filter(c => c.branch === currentUser.branch);
       }
       
       const inChargeHtml = filteredInCharges.map(c => {
@@ -1166,24 +1166,7 @@
             let i = inp.getAttribute('data-idx'); 
             currentFilterItems[i].inputQty = inp.value; 
         });
-        
-        Swal.fire({
-           title: currentLang === 'en' ? 'Select Photo Option' : 'เลือกรูปแบบรูปภาพ',
-           showCancelButton: true,
-           showDenyButton: true,
-           confirmButtonText: currentLang === 'en' ? 'Camera' : 'ถ่ายรูป',
-           denyButtonText: currentLang === 'en' ? 'Gallery' : 'เลือกจากคลัง',
-           cancelButtonText: currentLang === 'en' ? 'Cancel' : 'ยกเลิก',
-           confirmButtonColor: '#3525cd',
-           denyButtonColor: '#505f76',
-           cancelButtonColor: '#ba1a1a'
-        }).then((result) => {
-           if (result.isConfirmed) {
-              getEl('poItemCameraInput').click();
-           } else if (result.isDenied) {
-              getEl('poItemGalleryInput').click();
-           }
-        });
+        getEl('poItemCameraInput').click();
     }
 
     async function processPOItemPhoto(event) {
@@ -1334,34 +1317,33 @@
     function handleScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         setTimeout(() => {
-             const inputEl = getEl('scanInput');
-             if(!inputEl) return;
-             const input = inputEl.value.trim();
-             if(!input) return;
-             
-             setDisplay('autocompleteBox', 'none');
-             const skus = globalData.skus || [];
-             const searchInput = input.toLowerCase().replace(/\s+/g, '');
-             let found = skus.find(s => 
-                 String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
-                 String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
-             );
-             
-             if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
+         const inputEl = getEl('scanInput');
+         if(!inputEl) return;
+         const input = inputEl.value.trim();
+         if(!input) return;
+         
+         setDisplay('autocompleteBox', 'none');
+         const skus = globalData.skus || [];
+         const searchInput = input.toLowerCase().replace(/\s+/g, '');
+         let found = skus.find(s => 
+             String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
+             String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
+         );
+         
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
 
-             if(!found) {
-                Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
-                setValue('scanInput', ''); return;
-             }
-             pendingItem = found;
-             
-             setHtml('photoItemName', `${found.sku} - ${found.name}`);
-             setDisplay('scanInputContainer', 'none');
-             setDisplay('pendingPhotoArea', 'block');
-             setValue('scanInput', '');
-             
-         }, 50);
+         if(!found) {
+            Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
+            setValue('scanInput', ''); return;
+         }
+         pendingItem = found;
+         
+         setHtml('photoItemName', `${found.sku} - ${found.name}`);
+         setDisplay('scanInputContainer', 'none');
+         setDisplay('pendingPhotoArea', 'block');
+         setValue('scanInput', '');
+         
+         try { getEl('itemCameraInput').click(); } catch(err) {}
       }
     }
 
