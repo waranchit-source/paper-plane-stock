@@ -147,7 +147,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full z-50 bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -174,7 +174,7 @@
         <span class="material-symbols-outlined">inventory_2</span><span class="font-body-md font-semibold" data-i18n="stockTitle">Stock Balance</span>
       </a>
       <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewHistory', this)">
-        <span class="material-symbols-outlined">history</span><span class="font-body-md font-semibold" data-i18n="historyTitle">Recent Activity</span>
+        <span class="material-symbols-outlined">history</span><span class="font-body-md font-semibold" data-i18n="historyTitle">Activity Log</span>
       </a>
     </nav>
     
@@ -192,18 +192,8 @@
     </div>
   </aside>
 
-  <!-- Mobile Bottom Nav with expanded padding to prevent overlap -->
-  <div id="mobileNavWrapper" style="display:none;" class="z-[100] relative">
-    <nav class="flex md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant justify-around items-center pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.03)] pt-1">
-      <a class="mobile-nav-btn flex flex-col items-center p-2 text-primary transition-colors cursor-pointer" onclick="switchTab('viewInbound', this, true)"><span class="material-symbols-outlined">input</span><span class="text-[10px] font-bold mt-1">Inbound</span></a>
-      <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewAction', this, true)"><span class="material-symbols-outlined">qr_code_scanner</span><span class="text-[10px] font-bold mt-1">Scan</span></a>
-      <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewStockCount', this, true)"><span class="material-symbols-outlined">fact_check</span><span class="text-[10px] font-bold mt-1">Count</span></a>
-      <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewDashboard', this, true)"><span class="material-symbols-outlined">inventory_2</span><span class="text-[10px] font-bold mt-1">Stock</span></a>
-      <a class="mobile-nav-btn flex flex-col items-center p-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="switchTab('viewHistory', this, true)"><span class="material-symbols-outlined">history</span><span class="text-[10px] font-bold mt-1">Log</span></a>
-    </nav>
-  </div>
-
-  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-32 md:pb-8 transition-all duration-300 w-full">
+  <!-- Main View -->
+  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-8 transition-all duration-300 w-full">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
       <div class="flex items-center gap-4">
         <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto" onclick="toggleSidebar()">
@@ -269,7 +259,7 @@
                   <thead>
                     <tr class="bg-surface-container-high/30">
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thPoNumber">PO Number</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Item Name</th>
+                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-right" data-i18n="thQty">Remaining</th>
                       <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider w-32" data-i18n="thReceive">Receive</th>
@@ -558,9 +548,12 @@
             </select>
 
             <select id="historyTypeFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
-              <option value="All">All Status</option><option value="Inbound">Inbound (In)</option><option value="Outbound">Outbound (Out)</option>
+              <option value="All">All Status</option>
+              <option value="Inbound">Inbound (In)</option>
+              <option value="Outbound">Outbound (Out)</option>
               <option value="Stock Count">Stock Count</option>
             </select>
+            <button class="px-3 py-2 bg-surface-container hover:bg-surface-container-high rounded-xl transition-colors border border-outline-variant" onclick="loadHistory(true)"><span class="material-symbols-outlined text-on-surface">refresh</span></button>
           </div>
         </div>
         <div class="flex flex-col gap-4" id="historyList"></div>
@@ -570,7 +563,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvPpkuzKWkjgSTfgx7X_AR2gVvg-jAweAs8QzLJqzXR6YTEmqPed9xOh55ildgyec9BQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzs7kfeiTtpW_rqXpeEFCHXs0LBwbwPKyQCiiL_WZ9GBTKnZtzaBLod0UEEIJSFLBSQnQ/exec";
 
     const i18n = {
       en: {
@@ -739,7 +732,6 @@
        const isDesktop = window.innerWidth >= 768;
 
        if(isDesktop) {
-          setDisplay('mobileNavWrapper', 'none');
           overlay.style.display = 'none';
           overlay.style.opacity = '0';
           if(isSidebarOpen) {
@@ -752,7 +744,6 @@
              main.style.width = '100%';
           }
        } else {
-          setDisplay('mobileNavWrapper', 'block');
           main.style.marginLeft = '0';
           main.style.width = '100%';
           if(isSidebarOpen) {
@@ -878,9 +869,11 @@
       const branchHtml = branches.map(b => `<option value="${b}">${b}</option>`).join('');
       const defaultOpt = `<option value="">${i18n[currentLang].selectBranch}</option>`;
       
+      let isAdmin = currentUser && (currentUser.branch === 'ALL' || currentUser.role === 'Admin');
       let filteredInCharges = inCharges;
-      if (currentUser && currentUser.role !== 'Admin' && currentUser.branch !== 'ALL') {
-          filteredInCharges = inCharges.filter(c => c.branch === currentUser.branch);
+      
+      if (!isAdmin && currentUser) {
+          filteredInCharges = inCharges.filter(c => c.branch === currentUser.branch || c.branch === 'ALL' || c.branch === '');
       }
       
       const inChargeHtml = filteredInCharges.map(c => {
@@ -901,7 +894,7 @@
       setHtml('countInCharge', `<option value="">Select User</option>` + inChargeHtml);
 
       const histBranchFilter = getEl('historyBranchFilter');
-      if (currentUser && currentUser.role === 'Admin') {
+      if (isAdmin) {
           histBranchFilter.innerHTML = '<option value="">All Branches</option>' + branchHtml;
           histBranchFilter.style.display = 'inline-block';
       } else {
@@ -980,8 +973,6 @@
       
       const sb = getEl('sidebar');
       sb.classList.add('-translate-x-full');
-      
-      setDisplay('mobileNavWrapper', 'none');
       
       getEl('authContainer').classList.remove('hidden');
       setDisplay('authContainer', 'flex');
@@ -1149,7 +1140,7 @@
           <td class="px-6 py-4 border-b border-outline-variant/30"><div class="text-primary font-bold text-sm">${item.sku}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${item.name}">${item.name}</div></td>
           <td class="px-6 py-4 border-b border-outline-variant/30 text-on-surface-variant text-sm">${item.branch}</td>
           <td class="px-6 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm font-bold">${item.remaining}</span></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 w-32"><input type="number" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-sm po-rcv-qty pointer-events-auto" data-idx="${idx}" value="${item.inputQty}" placeholder="0" min="0" step="0.01" onchange="currentFilterItems[${idx}].inputQty = this.value;"></td>
+          <td class="px-6 py-4 border-b border-outline-variant/30 w-32"><input type="number" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-sm po-rcv-qty pointer-events-auto" data-idx="${idx}" value="${item.inputQty}" placeholder="0" min="0" step="0.01" oninput="currentFilterItems[${idx}].inputQty = this.value;"></td>
           <td class="px-4 py-4 border-b border-outline-variant/30 text-center">
             <button class="p-2 rounded-full transition-colors flex items-center justify-center ${item.photoBase64 ? 'text-success bg-success/10' : 'text-primary bg-primary/10 hover:bg-primary/20'} pointer-events-auto" onclick="openPOItemCamera(${idx})">
                <span class="material-symbols-outlined text-sm">photo_camera</span>
@@ -1162,10 +1153,6 @@
 
     function openPOItemCamera(idx) {
         currentPOPhotoIdx = idx;
-        document.querySelectorAll('.po-rcv-qty').forEach(inp => { 
-            let i = inp.getAttribute('data-idx'); 
-            currentFilterItems[i].inputQty = inp.value; 
-        });
         getEl('poItemCameraInput').click();
     }
 
@@ -1343,6 +1330,7 @@
          setDisplay('pendingPhotoArea', 'block');
          setValue('scanInput', '');
          
+         // Trigger camera automatically on valid scan
          try { getEl('itemCameraInput').click(); } catch(err) {}
       }
     }
@@ -1491,37 +1479,35 @@
     function handleCountScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         setTimeout(() => {
-             const inputEl = getEl('countScanInput');
-             if(!inputEl) return;
-             const input = inputEl.value.trim();
-             if(!input) return;
-             
-             setDisplay('countAutocompleteBox', 'none');
-             const skus = globalData.skus || [];
-             const searchInput = input.toLowerCase().replace(/\s+/g, '');
-             let found = skus.find(s => 
-                 String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
-                 String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
-             );
-             
-             if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
+         const inputEl = getEl('countScanInput');
+         if(!inputEl) return;
+         const input = inputEl.value.trim();
+         if(!input) return;
+         
+         setDisplay('countAutocompleteBox', 'none');
+         const skus = globalData.skus || [];
+         const searchInput = input.toLowerCase().replace(/\s+/g, '');
+         let found = skus.find(s => 
+             String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
+             String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
+         );
+         
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
 
-             if(!found) {
-                Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
-                setValue('countScanInput', ''); return;
-             }
-             pendingCountItem = found;
-             
-             setHtml('countItemNameQty', `${found.sku} - ${found.name}`);
-             setHtml('countItemUom', found.uom);
-             setDisplay('countScanInputContainer', 'none');
-             setDisplay('countPendingArea', 'block');
-             setValue('countScanInput', '');
-             setValue('countPendingQty', '');
-             
-             setTimeout(() => { const el = getEl('countPendingQty'); if(el) el.focus(); }, 10);
-         }, 50);
+         if(!found) {
+            Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
+            setValue('countScanInput', ''); return;
+         }
+         pendingCountItem = found;
+         
+         setHtml('countItemNameQty', `${found.sku} - ${found.name}`);
+         setHtml('countItemUom', found.uom);
+         setDisplay('countScanInputContainer', 'none');
+         setDisplay('countPendingArea', 'block');
+         setValue('countScanInput', '');
+         setValue('countPendingQty', '');
+         
+         setTimeout(() => { const el = getEl('countPendingQty'); if(el) el.focus(); }, 10);
       }
     }
 
@@ -1655,7 +1641,9 @@
        
        let filtered = globalData.history || [];
 
-       if(currentUser && currentUser.role === 'Admin') {
+       let isAdmin = currentUser && (currentUser.branch === 'ALL' || currentUser.role === 'Admin');
+
+       if(isAdmin) {
           branchFilter = bf ? bf.value : '';
        } else if (currentUser) {
           branchFilter = currentUser.branch;
@@ -1710,7 +1698,7 @@
 
           let canDelete = false;
           let role = currentUser ? currentUser.role : 'User';
-          if (role === 'Admin') {
+          if (isAdmin) {
              canDelete = true;
           } else if (role === 'Manager') {
              if (r.fromBranch === currentUser.branch || r.toBranch === currentUser.branch) canDelete = true;
