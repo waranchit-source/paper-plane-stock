@@ -25,6 +25,9 @@
     .autocomplete-item:hover { background-color: #f5f2ff; color: #4f46e5; }
     #autocompleteBox, #countAutocompleteBox { max-height: 250px; overflow-y: auto; border: 1px solid #e4e1ee; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 1045; display: none; opacity: 0; transition: opacity 0.3s ease; }
+    
+    /* Disabled states for select */
+    select:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
   </style>
 
   <script id="tailwind-config">
@@ -320,9 +323,8 @@
         </div>
       </div>
       
-      <!-- Hidden Camera Inputs for PO -->
-      <input type="file" id="poItemCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processPOItemPhoto(event)">
-      <input type="file" id="poItemGalleryInput" accept="image/*" style="display:none;" onchange="processPOItemPhoto(event)">
+      <!-- Hidden Camera/Gallery Inputs for PO -->
+      <input type="file" id="poItemCameraInput" accept="image/*" style="display:none;" onchange="processPOItemPhoto(event)">
 
       <!-- ================= SCAN & ACTION ================= -->
       <div id="viewAction" class="view-section">
@@ -391,7 +393,7 @@
              <p class="text-sm text-on-surface-variant mb-5 font-body-md" data-i18n="photoPrompt">Please take a photo for this item.</p>
              <div class="flex flex-col sm:flex-row justify-center gap-3">
                  <button class="bg-primary text-white px-6 py-3 font-bold rounded-xl shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 font-body-md" onclick="document.getElementById('itemCameraInput').click()">
-                    <span class="material-symbols-outlined">photo_camera</span> <span data-i18n="takePhotoBtn">Take Photo</span>
+                    <span class="material-symbols-outlined">photo_camera</span> <span data-i18n="takePhotoBtn">Camera</span>
                  </button>
                  <button class="bg-surface-container-high text-primary px-6 py-3 font-bold rounded-xl shadow-sm hover:bg-surface-container-highest active:scale-95 transition-all flex items-center justify-center gap-2 font-body-md" onclick="document.getElementById('itemGalleryInput').click()">
                     <span class="material-symbols-outlined">image</span> <span>Gallery</span>
@@ -568,11 +570,11 @@
         firstName: "First Name", lastName: "Surname", selectBranch: "Select Branch", rememberMe: "Remember me",
         noAccount: "Don't have an account?", haveAccount: "Have an account?", poTitle: "Inbound (PO)",
         searchPO: "Search PO Number", searchBtn: "Search Data", confirmBtn: "Confirm Receive",
-        actionTitle: "Scan & Action", docRef: "Doc Ref / Note / Invoice", scanInput: "Scan Barcode or Type SKU",
+        actionTitle: "Scan & Action", docRef: "Doc Ref / Note / Invoice", scanInput: "Scan Barcode or Type SKU/Name",
         enterQty: "Enter Qty", addBtn: "Add", confirmTx: "Confirm Transaction", stockTitle: "Stock Balance",
-        refreshBtn: "Refresh Data", historyTitle: "Activity Log", thSKU: "SKU", thName: "Name", thPoNumber: "PO Number",
+        refreshBtn: "Refresh Data", historyTitle: "Activity Log", thSKU: "SKU / Name", thName: "Name", thPoNumber: "PO Number",
         thBranch: "Branch", thQty: "Qty", thReceive: "Receive", thItem: "Item", thUom: "UOM", thUser: "User", poResults: "Pending Receive", receiveAllBtn: "Select All",
-        photoPrompt: "Please take a photo for this item.", takePhotoBtn: "Camera", cancelBtn: "Cancel", stockCountTitle: "Stock Count"
+        photoPrompt: "Please select a photo option.", takePhotoBtn: "Camera", cancelBtn: "Cancel", stockCountTitle: "Stock Count"
       },
       th: {
         appTitle: "Paper Plane", loginSub: "ระบบจัดการคลังสินค้า", loginBtn: "เข้าสู่ระบบ", signUp: "สมัครสมาชิก", userId: "รหัสพนักงาน / อีเมล", password: "รหัสผ่าน",
@@ -581,9 +583,9 @@
         searchPO: "ค้นหาเลข PO", searchBtn: "ค้นหาข้อมูล", confirmBtn: "ยืนยันรับสินค้า",
         actionTitle: "สแกน & จัดการ", docRef: "เลขที่เอกสาร / หมายเหตุ", scanInput: "สแกนบาร์โค้ด หรือพิมพ์ชื่อสินค้า",
         enterQty: "ระบุจำนวน", addBtn: "เพิ่ม", confirmTx: "ยืนยันทำรายการ", stockTitle: "สต็อกคงเหลือ",
-        refreshBtn: "รีเฟรชข้อมูล", historyTitle: "ประวัติทำรายการ", thSKU: "รหัส", thName: "ชื่อสินค้า", thPoNumber: "เลขที่ PO",
+        refreshBtn: "รีเฟรชข้อมูล", historyTitle: "ประวัติทำรายการ", thSKU: "รหัส / ชื่อสินค้า", thName: "ชื่อสินค้า", thPoNumber: "เลขที่ PO",
         thBranch: "สาขา", thQty: "จำนวน", thReceive: "รับเข้า", thItem: "รายการ", thUom: "หน่วย", thUser: "ผู้ทำรายการ", poResults: "รายการรอรับเข้า", receiveAllBtn: "รับทั้งหมด",
-        photoPrompt: "กรุณาถ่ายรูปหรืออัปโหลดรูปสำหรับสินค้านี้", takePhotoBtn: "ถ่ายรูป", cancelBtn: "ยกเลิก", stockCountTitle: "นับสต็อก (Stock Count)"
+        photoPrompt: "กรุณาถ่ายรูปหรือเลือกรูปภาพสำหรับสินค้านี้", takePhotoBtn: "ถ่ายรูป", cancelBtn: "ยกเลิก", stockCountTitle: "นับสต็อก (Stock Count)"
       }
     };
 
@@ -877,7 +879,19 @@
 
       if(currentUser && currentUser.branch !== 'ALL') {
           setValue('poReceiveBranch', currentUser.branch);
+          getEl('poReceiveBranch').disabled = true;
+
           setValue('countBranch', currentUser.branch);
+          getEl('countBranch').disabled = true;
+
+          setValue('actionFromBranch', currentUser.branch);
+          getEl('actionFromBranch').disabled = true;
+
+          setValue('filterBranch', currentUser.branch);
+          getEl('filterBranch').disabled = true;
+
+          setValue('stockBranchFilter', currentUser.branch);
+          getEl('stockBranchFilter').disabled = true;
       }
 
       const suppliers = [...new Set(pos.map(p => p.supplier).filter(Boolean))];
@@ -915,8 +929,9 @@
       
       const res = await apiCall('registerUser', [id, p, f, l, b]);
       if(res && res.success) {
-        currentUser = res.user; sessionStorage.setItem('ppUser_session', JSON.stringify(currentUser));
-        Swal.close(); showApp();
+        Swal.fire({icon:'success', title:'Success', text: res.message}).then(() => {
+           toggleAuth();
+        });
       } else { Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Registration failed'}); }
     }
 
@@ -975,12 +990,7 @@
       const initials = (currentUser.fname.charAt(0) + (currentUser.lname ? currentUser.lname.charAt(0) : '')).toUpperCase();
       getEl('sidebarUserInitials').innerText = initials;
       
-      if(currentUser.branch !== 'ALL') {
-         setValue('actionFromBranch', currentUser.branch);
-         setValue('filterBranch', currentUser.branch);
-         setValue('poReceiveBranch', currentUser.branch);
-         setValue('countBranch', currentUser.branch);
-      }
+      populateDropdowns();
       toggleActionFields(); startBackgroundSync();
       switchTab('viewInbound', document.querySelector('.desktop-sidebar .nav-item-btn'));
     }
@@ -1024,7 +1034,7 @@
       const poInputEl = getEl('filterPO');
       if(!poInputEl) return;
       const poInputStr = poInputEl.value.toLowerCase().replace(/\s/g, '');
-      const br = getEl('filterBranch').value.trim();
+      const br = currentUser.branch !== 'ALL' ? currentUser.branch : getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
       const dt = getEl('filterDate').value;
 
@@ -1045,14 +1055,29 @@
         return match;
       });
 
+      let isExactPO = poInputStr !== '' && tempItems.some(p => String(p.po).toLowerCase().replace(/\s/g, '') === poInputStr);
       let processedItems = [];
+      let totalQtyInPO = 0;
+      let totalReceivedInPO = 0;
+
       tempItems.forEach(item => {
          let key = (item.po + '_' + item.sku).toUpperCase().trim();
          let received = globalData.poReceives[key] || 0;
          let remaining = item.qty - received;
+         
+         if (String(item.po).toLowerCase().replace(/\s/g, '') === poInputStr) {
+             totalQtyInPO += item.qty;
+             totalReceivedInPO += received;
+         }
+
          if (remaining > 0) processedItems.push({...item, remaining: remaining, inputQty: '', photoBase64: null});
       });
       currentFilterItems = processedItems;
+
+      if (isExactPO && totalQtyInPO > 0 && totalReceivedInPO >= totalQtyInPO) {
+           setDisplay('poResultContainer', 'none');
+           return Swal.fire({icon:'success', title: currentLang==='en'?'PO Fully Received':'รับสินค้าครบแล้ว', text: currentLang==='en'?`PO ${poInputEl.value} has been fully received.`:`PO ${poInputEl.value} รับสินค้าครบตามรายการทั้งหมดแล้ว`});
+      }
 
       if(currentFilterItems.length === 0) {
           setDisplay('poResultContainer', 'none');
@@ -1269,10 +1294,11 @@
          let found = skus.find(s => 
              String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
              String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
-             String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
-             String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
+             String(s.name).toLowerCase().replace(/\s/g, '') === searchInput
          );
          
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput));
+
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
             setValue('scanInput', ''); return;
@@ -1444,9 +1470,10 @@
          let found = skus.find(s => 
              String(s.barcode).toLowerCase().replace(/\s/g, '') === searchInput || 
              String(s.sku).toLowerCase().replace(/\s/g, '') === searchInput || 
-             String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) ||
-             String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput)
+             String(s.name).toLowerCase().replace(/\s/g, '') === searchInput
          );
+
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s/g, '').includes(searchInput));
          
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
@@ -1591,6 +1618,10 @@
        const dateFilter = df.value;
        const typeFilter = tf.value;
        let filtered = globalData.history || [];
+
+       if(currentUser && currentUser.branch !== 'ALL') {
+          filtered = filtered.filter(r => r.fromBranch === currentUser.branch || r.toBranch === currentUser.branch);
+       }
        
        if(dateFilter) {
           filtered = filtered.filter(r => {
