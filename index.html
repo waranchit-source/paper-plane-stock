@@ -26,7 +26,7 @@
     #autocompleteBox, #countAutocompleteBox { max-height: 250px; overflow-y: auto; border: 1px solid #e4e1ee; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 1040; display: none; opacity: 0; transition: opacity 0.3s ease; }
     #sidebar { z-index: 1050; }
-    select:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
+    select:disabled, input:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
   </style>
 
   <script id="tailwind-config">
@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav for mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -197,7 +197,7 @@
   <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative pb-8 transition-all duration-300 w-full">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
       <div class="flex items-center gap-4">
-        <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto" onclick="toggleSidebar()">
+        <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto relative z-50" onclick="toggleSidebar()">
           <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex items-center gap-2">
@@ -287,7 +287,7 @@
               <div class="p-6 space-y-4">
                 <div class="flex flex-col gap-1.5">
                   <label class="font-label-md text-label-md text-error font-bold uppercase">Receive To Branch *</label>
-                  <select id="poReceiveBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" required></select>
+                  <select id="poReceiveBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="filterInChargeDropdowns()" required></select>
                 </div>
                 <div class="flex flex-col gap-1.5">
                   <label class="font-label-md text-label-md text-error font-bold uppercase">In Charge (ผู้รับผิดชอบ) *</label>
@@ -424,9 +424,11 @@
             </table>
           </div>
           
-          <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitBulkAction()">
-            <span class="material-symbols-outlined">send</span> <span data-i18n="confirmTx">Confirm Transaction</span>
-          </button>
+          <div class="mt-6">
+            <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitBulkAction()">
+              <span class="material-symbols-outlined">send</span> <span data-i18n="confirmTx">Confirm Transaction</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -493,9 +495,11 @@
             </table>
           </div>
           
-          <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitStockCount()">
-            <span class="material-symbols-outlined">fact_check</span> <span>Confirm Stock Count</span>
-          </button>
+          <div class="mt-6">
+            <button class="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex justify-center items-center gap-2 pointer-events-auto" onclick="submitStockCount()">
+              <span class="material-symbols-outlined">fact_check</span> <span>Confirm Stock Count</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -548,10 +552,11 @@
             </select>
 
             <select id="historyTypeFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
-              <option value="All">All Status</option><option value="Inbound">Inbound (In)</option><option value="Outbound">Outbound (Out)</option>
+              <option value="All">All Status</option>
+              <option value="Inbound">Inbound (In)</option>
+              <option value="Outbound">Outbound (Out)</option>
               <option value="Stock Count">Stock Count</option>
             </select>
-            <button class="px-3 py-2 bg-surface-container hover:bg-surface-container-high rounded-xl transition-colors border border-outline-variant" onclick="loadHistory(true)"><span class="material-symbols-outlined text-on-surface">refresh</span></button>
           </div>
         </div>
         <div class="flex flex-col gap-4" id="historyList"></div>
@@ -561,7 +566,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBgCVbPEJ96xVAVYSgRzTjniWfbPwe1uI6QUwMbdHsoqlnhHoeMFlSZp1ZEZpXdswKxw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxG3a4Rw1H4Ya7OJ-ePbXT2klTfKNc5Ao6W7g6_g47MkeeY5lfBLqv3hJBqtYNv2p2Hyg/exec";
 
     const i18n = {
       en: {
@@ -604,6 +609,18 @@
     const setHtml = (id, html) => { const el = getEl(id); if (el) el.innerHTML = html; };
     const setValue = (id, val) => { const el = getEl(id); if (el) el.value = val; };
     const setDisplay = (id, display) => { const el = getEl(id); if (el) el.style.display = display; };
+
+    function cleanKey(str) {
+       return String(str).toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    }
+
+    function isUserAdmin() {
+       return currentUser && (String(currentUser.role).toLowerCase() === 'admin' || currentUser.branch === 'ALL');
+    }
+
+    function isUserManager() {
+       return currentUser && String(currentUser.role).toLowerCase() === 'manager';
+    }
 
     function setStorageData(key, value) {
         try { localStorage.setItem(key, value); } catch(e) {}
@@ -861,7 +878,7 @@
     function filterInChargeDropdowns() {
        if(!globalData) return;
        const inCharges = globalData.inCharges || [];
-       let isAdmin = currentUser && (currentUser.role === 'Admin');
+       let isAdmin = isUserAdmin();
        
        let poBranch = getEl('poReceiveBranch').value;
        let actionBranch = getEl('actionFromBranch').value;
@@ -869,8 +886,10 @@
 
        function getHtmlFor(br) {
            let filtered = inCharges;
-           if (!isAdmin && br !== 'ALL' && br !== '') {
-               filtered = inCharges.filter(c => c.branch === br || c.branch === 'ALL' || c.branch === '');
+           if (!isAdmin && currentUser && currentUser.branch !== 'ALL') {
+               filtered = inCharges.filter(c => c.branch === currentUser.branch || !c.branch);
+           } else if (br) {
+               filtered = inCharges.filter(c => c.branch === br || c.branch === 'ALL' || !c.branch);
            }
            return `<option value="">Select User</option>` + filtered.map(c => {
                let display = c.branch ? `${c.name} - ${c.branch}` : c.name;
@@ -891,7 +910,7 @@
       const branchHtml = branches.map(b => `<option value="${b}">${b}</option>`).join('');
       const defaultOpt = `<option value="">${i18n[currentLang].selectBranch}</option>`;
       
-      let isAdmin = currentUser && (currentUser.role === 'Admin');
+      let isAdmin = isUserAdmin();
       
       setHtml('regBranch', '<option value="ALL">ALL</option>' + branchHtml);
       setHtml('filterBranch', '<option value="">All Branches</option>' + branchHtml);
@@ -909,7 +928,7 @@
           histBranchFilter.style.display = 'none';
       }
 
-      if(currentUser && currentUser.branch !== 'ALL' && !isAdmin) {
+      if(!isAdmin && currentUser && currentUser.branch !== 'ALL') {
           setValue('poReceiveBranch', currentUser.branch);
           getEl('poReceiveBranch').disabled = true;
 
@@ -1017,7 +1036,8 @@
       isSidebarOpen = window.innerWidth >= 768;
       handleResize();
       
-      getEl('sidebarUserName').innerText = `${currentUser.fname} ${currentUser.lname}`;
+      let roleText = currentUser.role ? ` (${currentUser.role})` : '';
+      getEl('sidebarUserName').innerText = `${currentUser.fname} ${currentUser.lname}${roleText}`;
       getEl('sidebarUserBranch').innerText = currentUser.branch;
       const initials = (currentUser.fname.charAt(0) + (currentUser.lname ? currentUser.lname.charAt(0) : '')).toUpperCase();
       getEl('sidebarUserInitials').innerText = initials;
@@ -1032,9 +1052,6 @@
       document.querySelectorAll('.desktop-sidebar .nav-item-btn').forEach(b => {
           b.classList.remove('bg-surface-container-high', 'text-primary'); b.classList.add('text-on-surface-variant');
       });
-      document.querySelectorAll('.mobile-nav-btn').forEach(b => {
-          b.classList.remove('text-primary'); b.classList.add('text-on-surface-variant');
-      });
       
       const activeView = getEl(tabId);
       if(activeView) {
@@ -1042,16 +1059,8 @@
           activeView.style.display = 'block';
       }
       
-      if(isMobileNav && el) {
-          el.classList.add('text-primary'); el.classList.remove('text-on-surface-variant');
-          let idx = Array.from(el.parentNode.children).indexOf(el);
-          let dBtns = document.querySelectorAll('.desktop-sidebar .nav-item-btn');
-          if(dBtns[idx]) { dBtns[idx].classList.add('bg-surface-container-high', 'text-primary'); dBtns[idx].classList.remove('text-on-surface-variant'); }
-      } else if(el) {
+      if(el) {
           el.classList.add('bg-surface-container-high', 'text-primary'); el.classList.remove('text-on-surface-variant');
-          let idx = Array.from(el.parentNode.children).indexOf(el);
-          let mBtns = document.querySelectorAll('.mobile-nav-btn');
-          if(mBtns[idx]) { mBtns[idx].classList.add('text-primary'); mBtns[idx].classList.remove('text-on-surface-variant'); }
       }
       
       if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
@@ -1065,15 +1074,15 @@
     function applyPOFilter() {
       const poInputEl = getEl('filterPO');
       if(!poInputEl) return;
-      const poInputStr = poInputEl.value.replace(/\s+/g, '').toUpperCase();
-      let isAdmin = currentUser && (currentUser.role === 'Admin');
+      const poInputStr = cleanKey(poInputEl.value);
+      let isAdmin = isUserAdmin();
       const br = (!isAdmin && currentUser.branch !== 'ALL') ? currentUser.branch : getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
       const dt = getEl('filterDate').value;
 
       let tempItems = (globalData.pos || []).filter(p => {
         let match = true;
-        let itemPoStr = String(p.po).replace(/\s+/g, '').toUpperCase();
+        let itemPoStr = cleanKey(p.po);
         if(poInputStr && !itemPoStr.includes(poInputStr)) match = false;
         if(br && p.branch !== br) match = false;
         if(sup && p.supplier !== sup) match = false;
@@ -1088,14 +1097,14 @@
         return match;
       });
 
-      let isExactPO = poInputStr !== '' && tempItems.some(p => String(p.po).replace(/\s+/g, '').toUpperCase() === poInputStr);
+      let isExactPO = poInputStr !== '' && tempItems.some(p => cleanKey(p.po) === poInputStr);
       let processedItems = [];
       let totalQtyInPO = 0;
       let totalReceivedInPO = 0;
 
       tempItems.forEach(item => {
-         let normPo = String(item.po).replace(/\s+/g, '').toUpperCase();
-         let normSku = String(item.sku).replace(/\s+/g, '').toUpperCase();
+         let normPo = cleanKey(item.po);
+         let normSku = cleanKey(item.sku);
          let key = normPo + '_' + normSku;
          let received = globalData.poReceives[key] || 0;
          let remaining = item.qty - received;
@@ -1127,7 +1136,7 @@
       setDisplay('poResultContainer', 'flex');
 
       if(poInputStr) {
-         let hist = (globalData.poHistory || []).filter(h => String(h.po).replace(/\s+/g, '').toUpperCase().includes(poInputStr));
+         let hist = (globalData.poHistory || []).filter(h => cleanKey(h.po).includes(poInputStr));
          if(hist.length > 0) {
             const histHtml = hist.map(h => `
                <div class="px-4 py-3 bg-surface border border-outline-variant rounded-xl flex justify-between items-center">
@@ -1291,10 +1300,10 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = val.toLowerCase().replace(/\s+/g, '');
+       const searchInput = cleanKey(val);
        const matches = skus.filter(s => 
-           String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput) || 
-           String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || 
+           cleanKey(s.sku).includes(searchInput) || 
+           cleanKey(s.name).includes(searchInput) || 
            String(s.barcode).includes(val)
        ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
@@ -1315,7 +1324,6 @@
     function handleScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         
          const inputEl = getEl('scanInput');
          if(!inputEl) return;
          const input = inputEl.value.trim();
@@ -1323,13 +1331,14 @@
          
          setDisplay('autocompleteBox', 'none');
          const skus = globalData.skus || [];
-         const searchInput = input.toLowerCase().replace(/\s+/g, '');
+         const searchInput = cleanKey(input);
+         
          let found = skus.find(s => 
-             String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
-             String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
+             cleanKey(s.barcode) === searchInput || 
+             cleanKey(s.sku) === searchInput
          );
          
-         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
+         if(!found) found = skus.find(s => cleanKey(s.name).includes(searchInput) || cleanKey(s.sku).includes(searchInput));
 
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
@@ -1342,8 +1351,8 @@
          setDisplay('pendingPhotoArea', 'block');
          setValue('scanInput', '');
          
-         // Trigger camera automatically on valid scan synchronously
-         try { getEl('itemCameraInput').click(); } catch(err) {}
+         // เด้งกล้องทันทีที่เจอสินค้า
+         getEl('itemCameraInput').click();
       }
     }
 
@@ -1459,10 +1468,10 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = val.toLowerCase().replace(/\s+/g, '');
+       const searchInput = cleanKey(val);
        const matches = skus.filter(s => 
-           String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput) || 
-           String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || 
+           cleanKey(s.sku).includes(searchInput) || 
+           cleanKey(s.name).includes(searchInput) || 
            String(s.barcode).includes(val)
        ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
@@ -1479,7 +1488,6 @@
     function handleCountScan(e) {
       if(e.key === 'Enter' || e.keyCode === 13) {
          if(e.preventDefault) e.preventDefault();
-         
          const inputEl = getEl('countScanInput');
          if(!inputEl) return;
          const input = inputEl.value.trim();
@@ -1487,13 +1495,14 @@
          
          setDisplay('countAutocompleteBox', 'none');
          const skus = globalData.skus || [];
-         const searchInput = input.toLowerCase().replace(/\s+/g, '');
+         const searchInput = cleanKey(input);
+         
          let found = skus.find(s => 
-             String(s.barcode).toLowerCase().replace(/\s+/g, '') === searchInput || 
-             String(s.sku).toLowerCase().replace(/\s+/g, '') === searchInput
+             cleanKey(s.barcode) === searchInput || 
+             cleanKey(s.sku) === searchInput
          );
          
-         if(!found) found = skus.find(s => String(s.name).toLowerCase().replace(/\s+/g, '').includes(searchInput) || String(s.sku).toLowerCase().replace(/\s+/g, '').includes(searchInput));
+         if(!found) found = skus.find(s => cleanKey(s.name).includes(searchInput) || cleanKey(s.sku).includes(searchInput));
 
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
@@ -1642,7 +1651,7 @@
        
        let filtered = globalData.history || [];
 
-       let isAdmin = currentUser && (currentUser.role === 'Admin');
+       let isAdmin = isUserAdmin();
 
        if(isAdmin) {
           branchFilter = bf ? bf.value : '';
@@ -1701,7 +1710,7 @@
           let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
-          } else if (role === 'Manager') {
+          } else if (isUserManager()) {
              if (r.fromBranch === currentUser.branch || r.toBranch === currentUser.branch) canDelete = true;
           }
 
