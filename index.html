@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav for mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -548,6 +548,7 @@
           <div class="flex flex-wrap gap-2 pointer-events-auto">
             <input type="date" id="historyDateFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
             
+            <!-- Branch Filter for Activity Log (Admin Only) -->
             <select id="historyBranchFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" style="display:none;" onchange="renderHistorySilent()">
                <option value="">All Branches</option>
             </select>
@@ -567,7 +568,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWXrbIUp9Y4axDHwS6KU3jfWm9k1V_i3o84A257AFnNb57TdHRAG7mQzfPzwlG33xMaA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-KTXcUoCd8EsA0tTapCV2b_HBNbi96-agnoyK-brHeAzcPpmB0_gbYLiCZ0cttFZSqA/exec";
 
     const i18n = {
       en: {
@@ -1108,7 +1109,7 @@
       tempItems.forEach(item => {
          let normPo = cleanStr(item.po);
          let normSku = cleanStr(item.sku);
-         let key = normPo + '||' + normSku;
+         let key = normPo + '_' + normSku;
          let received = parseFloat(globalData.poReceives[key]) || 0;
          let remaining = parseFloat(item.qty) - received;
          
@@ -1311,7 +1312,7 @@
        const matches = skus.filter(s => 
            cleanStr(s.sku).includes(searchInput) || 
            cleanStr(s.name).includes(searchInput) || 
-           cleanStr(s.barcode).includes(searchInput)
+           String(s.barcode).includes(val)
        ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
@@ -1478,7 +1479,7 @@
        const matches = skus.filter(s => 
            cleanStr(s.sku).includes(searchInput) || 
            cleanStr(s.name).includes(searchInput) || 
-           cleanStr(s.barcode).includes(searchInput)
+           String(s.barcode).includes(val)
        ).slice(0, 6);
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
@@ -1713,6 +1714,7 @@
           }
 
           let canDelete = false;
+          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
