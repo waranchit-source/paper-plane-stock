@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav for mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -317,6 +317,7 @@
         </div>
       </div>
       
+      <!-- Hidden Camera/Gallery Inputs for PO -->
       <input type="file" id="poItemCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processPOItemPhoto(event)">
       <input type="file" id="poItemGalleryInput" accept="image/*" style="display:none;" onchange="processPOItemPhoto(event)">
 
@@ -326,7 +327,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-primary font-bold uppercase ml-1">Action Type</label>
-              <select id="actionType" class="w-full px-4 py-3 bg-primary/5 border border-primary text-primary font-bold rounded-xl focus:ring-2 outline-none pointer-events-auto" onchange="toggleActionFields()">
+              <select id="actionType" class="w-full px-4 py-3 bg-primary/5 border border-primary text-primary font-bold rounded-xl focus:ring-2 outline-none pointer-events-auto" onchange="toggleActionFields(); saveActionDraft();">
                 <option value="Outbound">Outbound (Issue/Sell)</option><option value="Inbound">Inbound (Direct)</option>
                 <option value="Transfer">Transfer</option><option value="Entertain">Entertain</option>
                 <option value="RD">RD</option><option value="Return to Stock">Return to Stock</option>
@@ -335,39 +336,40 @@
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Transaction Date</label>
-              <input type="date" id="actionDate" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" required>
+              <input type="date" id="actionDate" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="saveActionDraft()" required>
             </div>
             
             <div class="flex flex-col gap-1.5" id="divFromBranch">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1" id="lblFromBranch">From Branch (Origin) <span class="text-error">*</span></label>
-              <select id="actionFromBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="filterInChargeDropdowns()"><option value="">Select Origin</option></select>
+              <select id="actionFromBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="filterInChargeDropdowns(); saveActionDraft();"><option value="">Select Origin</option></select>
             </div>
             <div class="flex flex-col gap-1.5" id="divToBranch">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1" id="lblToBranch">To Branch (Destination) <span class="font-normal text-outline normal-case">(Optional)</span></label>
-              <select id="actionToBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto"><option value="">Select Destination</option></select>
+              <select id="actionToBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="saveActionDraft()"><option value="">Select Destination</option></select>
             </div>
             
             <div class="flex flex-col gap-1.5" id="divActionDocRef">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Doc Ref <span class="font-normal text-outline normal-case">(Optional)</span></label>
-              <input type="text" id="actionDocRef" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Doc Ref / PO No.">
+              <input type="text" id="actionDocRef" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Doc Ref / PO No." onchange="saveActionDraft()">
             </div>
             <div class="flex flex-col gap-1.5" id="divActionInvoice" style="display:none;">
               <label class="font-label-sm text-label-sm text-error font-bold uppercase ml-1">Invoice No. *</label>
-              <input type="text" id="actionInvoice" class="w-full px-4 py-3 bg-surface-container-low border-2 border-error/40 rounded-xl focus:ring-2 focus:ring-error/20 focus:border-error outline-none transition-all font-body-md pointer-events-auto" placeholder="Invoice No.">
+              <input type="text" id="actionInvoice" class="w-full px-4 py-3 bg-surface-container-low border-2 border-error/40 rounded-xl focus:ring-2 focus:ring-error/20 focus:border-error outline-none transition-all font-body-md pointer-events-auto" placeholder="Invoice No." onchange="saveActionDraft()">
             </div>
             
             <div class="flex flex-col gap-1.5" id="divActionInCharge">
               <label class="font-label-sm text-label-sm text-error font-bold uppercase ml-1">In Charge (ผู้รับผิดชอบ) *</label>
-              <select id="actionInCharge" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" required></select>
+              <select id="actionInCharge" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="saveActionDraft()" required></select>
             </div>
             <div class="flex flex-col gap-1.5" id="divActionRemark">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Remark <span class="font-normal text-outline normal-case">(Optional)</span></label>
-              <input type="text" id="actionRemark" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Note / Remark">
+              <input type="text" id="actionRemark" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Note / Remark" onchange="saveActionDraft()">
             </div>
           </div>
           
           <hr class="border-outline-variant my-6">
           
+          <!-- Scan Barcode Step -->
           <div id="scanInputContainer" class="relative mb-5 pointer-events-auto">
             <div class="flex shadow-sm rounded-xl overflow-hidden border border-outline-variant focus-within:ring-2 ring-primary/20 transition-all bg-surface-container-lowest">
               <span class="flex items-center justify-center px-4"><span class="material-symbols-outlined text-outline">barcode_scanner</span></span>
@@ -376,9 +378,11 @@
             <div id="autocompleteBox" class="absolute w-full bg-surface-container-lowest shadow-lg rounded-b-xl hidden z-50 border border-outline-variant"></div>
           </div>
           
+          <!-- Hidden Inputs for Action Camera/Gallery -->
           <input type="file" id="itemCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processItemPhoto(event)">
           <input type="file" id="itemGalleryInput" accept="image/*" style="display:none;" onchange="processItemPhoto(event)">
 
+          <!-- Photo Step -->
           <div id="pendingPhotoArea" class="p-6 mb-5 rounded-xl bg-primary/5 border border-primary/20 shadow-sm text-center pointer-events-auto" style="display:none;">
              <strong id="photoItemName" class="text-primary text-xl font-headline-md block mb-2"></strong>
              <p class="text-sm text-on-surface-variant mb-5 font-body-md" data-i18n="photoPrompt">Please select a photo option.</p>
@@ -393,6 +397,7 @@
              </div>
           </div>
 
+          <!-- Qty Step -->
           <div id="pendingScanArea" class="p-4 mb-5 rounded-xl bg-primary/5 border border-primary/20 shadow-sm pointer-events-auto" style="display:none;">
             <div class="flex justify-between items-center mb-3">
               <strong id="pendingItemNameQty" class="truncate text-primary text-lg font-headline-md"></strong>
@@ -439,19 +444,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Transaction Date</label>
-              <input type="date" id="countDate" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" required>
+              <input type="date" id="countDate" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="saveCountDraft()" required>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Branch (Location) <span class="text-error">*</span></label>
-              <select id="countBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="filterInChargeDropdowns()"><option value="">Select Branch</option></select>
+              <select id="countBranch" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="filterInChargeDropdowns(); saveCountDraft();"><option value="">Select Branch</option></select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-error font-bold uppercase ml-1">In Charge (ผู้รับผิดชอบ) *</label>
-              <select id="countInCharge" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" required></select>
+              <select id="countInCharge" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" onchange="saveCountDraft()" required></select>
             </div>
             <div class="flex flex-col gap-1.5">
               <label class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase ml-1">Remark <span class="font-normal text-outline normal-case">(Optional)</span></label>
-              <input type="text" id="countRemark" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Note / Remark">
+              <input type="text" id="countRemark" class="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md pointer-events-auto" placeholder="Note / Remark" onchange="saveCountDraft()">
             </div>
           </div>
           
@@ -562,7 +567,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFoisVzyCSvLDnSgm4oQ5_vLGd49wajh6Rer_8AU-J4X9AU6MclikHsl1WwyjhzWmQ_w/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXr5iiWHi9G8LNIi1IryrOzmB6MOOd0wYo1GdRz1NJQFIt833vYoh9cyOTRMiYkpQ6lw/exec";
 
     const i18n = {
       en: {
@@ -606,10 +611,6 @@
     const setValue = (id, val) => { const el = getEl(id); if (el) el.value = val; };
     const setDisplay = (id, display) => { const el = getEl(id); if (el) el.style.display = display; };
 
-    function cleanStr(str) {
-       return String(str).toUpperCase().replace(/\s+/g, '');
-    }
-
     function isUserAdmin() {
        if (!currentUser) return false;
        return currentUser.branch === 'ALL' || String(currentUser.role).toUpperCase() === 'ADMIN';
@@ -637,6 +638,85 @@
         try { localStorage.removeItem(key); } catch(e) {}
         document.cookie = key + "=; max-age=0; path=/";
     }
+
+    // --- Draft Auto-Save Functions ---
+    function saveActionDraft() {
+        const draft = {
+            items: scannedItems,
+            type: getEl('actionType').value,
+            from: getEl('actionFromBranch').value,
+            to: getEl('actionToBranch').value,
+            doc: getEl('actionDocRef').value,
+            inv: getEl('actionInvoice').value,
+            remark: getEl('actionRemark').value,
+            inCharge: getEl('actionInCharge').value,
+            date: getEl('actionDate').value
+        };
+        localStorage.setItem('pp_draft_action', JSON.stringify(draft));
+    }
+
+    function loadActionDraft() {
+        const saved = localStorage.getItem('pp_draft_action');
+        if (saved) {
+            try {
+                const draft = JSON.parse(saved);
+                if (draft.items) scannedItems = draft.items;
+                if (draft.type) setValue('actionType', draft.type);
+                if (draft.from) setValue('actionFromBranch', draft.from);
+                if (draft.to) setValue('actionToBranch', draft.to);
+                if (draft.doc) setValue('actionDocRef', draft.doc);
+                if (draft.inv) setValue('actionInvoice', draft.inv);
+                if (draft.remark) setValue('actionRemark', draft.remark);
+                if (draft.date) setValue('actionDate', draft.date);
+                
+                toggleActionFields();
+                filterInChargeDropdowns();
+                
+                if (draft.inCharge) setValue('actionInCharge', draft.inCharge);
+                
+                renderScanItems();
+            } catch(e){}
+        }
+    }
+
+    function clearActionDraft() {
+        localStorage.removeItem('pp_draft_action');
+    }
+
+    function saveCountDraft() {
+        const draft = {
+            items: countItems,
+            branch: getEl('countBranch').value,
+            remark: getEl('countRemark').value,
+            inCharge: getEl('countInCharge').value,
+            date: getEl('countDate').value
+        };
+        localStorage.setItem('pp_draft_count', JSON.stringify(draft));
+    }
+
+    function loadCountDraft() {
+        const saved = localStorage.getItem('pp_draft_count');
+        if (saved) {
+            try {
+                const draft = JSON.parse(saved);
+                if (draft.items) countItems = draft.items;
+                if (draft.branch) setValue('countBranch', draft.branch);
+                if (draft.remark) setValue('countRemark', draft.remark);
+                if (draft.date) setValue('countDate', draft.date);
+                
+                filterInChargeDropdowns();
+                
+                if (draft.inCharge) setValue('countInCharge', draft.inCharge);
+                
+                renderCountItems();
+            } catch(e){}
+        }
+    }
+
+    function clearCountDraft() {
+        localStorage.removeItem('pp_draft_count');
+    }
+    // -------------------------------
 
     function compressImage(file, maxWidth, maxHeight, quality) {
         return new Promise((resolve, reject) => {
@@ -1041,7 +1121,10 @@
       getEl('sidebarUserInitials').innerText = initials;
       
       populateDropdowns();
-      toggleActionFields(); startBackgroundSync();
+      loadActionDraft();
+      loadCountDraft();
+      toggleActionFields(); 
+      startBackgroundSync();
       switchTab('viewInbound', document.querySelector('.desktop-sidebar .nav-item-btn'));
     }
 
@@ -1072,7 +1155,7 @@
     function applyPOFilter() {
       const poInputEl = getEl('filterPO');
       if(!poInputEl) return;
-      const poInputStr = cleanStr(poInputEl.value);
+      const poInputStr = poInputEl.value.toLowerCase().trim();
       let isAdmin = isUserAdmin();
       const br = (!isAdmin && currentUser.branch !== 'ALL') ? currentUser.branch : getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
@@ -1080,7 +1163,7 @@
 
       let tempItems = (globalData.pos || []).filter(p => {
         let match = true;
-        let itemPoStr = cleanStr(p.po);
+        let itemPoStr = String(p.po).toLowerCase().trim();
         if(poInputStr && !itemPoStr.includes(poInputStr)) match = false;
         if(br && p.branch !== br) match = false;
         if(sup && p.supplier !== sup) match = false;
@@ -1095,19 +1178,19 @@
         return match;
       });
 
-      let isExactPO = poInputStr !== '' && tempItems.some(p => cleanStr(p.po) === poInputStr);
+      let isExactPO = poInputStr !== '' && tempItems.some(p => String(p.po).toLowerCase().trim() === poInputStr);
       let processedItems = [];
       let totalQtyInPO = 0;
       let totalReceivedInPO = 0;
 
       tempItems.forEach(item => {
-         let normPo = cleanStr(item.po);
-         let normSku = cleanStr(item.sku);
+         let normPo = String(item.po).toUpperCase().trim();
+         let normSku = String(item.sku).toUpperCase().trim();
          let key = normPo + '_' + normSku;
          let received = parseFloat(globalData.poReceives[key]) || 0;
          let remaining = parseFloat(item.qty) - received;
          
-         if (normPo === poInputStr) {
+         if (String(item.po).toLowerCase().trim() === poInputStr) {
              totalQtyInPO += parseFloat(item.qty) || 0;
              totalReceivedInPO += received;
          }
@@ -1134,7 +1217,7 @@
       setDisplay('poResultContainer', 'flex');
 
       if(poInputStr) {
-         let hist = (globalData.poHistory || []).filter(h => cleanStr(h.po).includes(poInputStr));
+         let hist = (globalData.poHistory || []).filter(h => String(h.po).toLowerCase().trim().includes(poInputStr));
          if(hist.length > 0) {
             const histHtml = hist.map(h => `
                <div class="px-4 py-3 bg-surface border border-outline-variant rounded-xl flex justify-between items-center">
@@ -1314,12 +1397,14 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = cleanStr(val);
+       const searchInput = val.toLowerCase().trim();
+       
        const matches = skus.filter(s => 
-           cleanStr(s.sku).includes(searchInput) || 
-           cleanStr(s.name).includes(searchInput) || 
+           String(s.sku).toLowerCase().includes(searchInput) || 
+           String(s.name).toLowerCase().includes(searchInput) || 
            String(s.barcode).includes(val)
-       ).slice(0, 6);
+       ).slice(0, 15);
+       
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
        matches.forEach(m => {
@@ -1345,14 +1430,14 @@
          
          setDisplay('autocompleteBox', 'none');
          const skus = globalData.skus || [];
-         const searchInput = cleanStr(input);
+         const searchInput = input.toLowerCase().trim();
          
          let found = skus.find(s => 
-             cleanStr(s.barcode) === searchInput || 
-             cleanStr(s.sku) === searchInput
+             String(s.barcode).toLowerCase().trim() === searchInput || 
+             String(s.sku).toLowerCase().trim() === searchInput
          );
          
-         if(!found) found = skus.find(s => cleanStr(s.name).includes(searchInput) || cleanStr(s.sku).includes(searchInput));
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().includes(searchInput) || String(s.sku).toLowerCase().includes(searchInput));
 
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
@@ -1403,7 +1488,9 @@
          const currentStock = stockItem ? parseFloat(stockItem.qty) : 0;
          if(currentStock <= 0 || qty > currentStock) return Swal.fire({icon:'error', title: currentLang==='en'?'Insufficient Stock':'สต็อกไม่เพียงพอ', text: `${pendingItem.sku} มีคงเหลือแค่ ${currentStock}`});
       }
-      scannedItems.push({...pendingItem, qty: qty}); renderScanItems();
+      scannedItems.push({...pendingItem, qty: qty}); 
+      renderScanItems();
+      saveActionDraft();
       
       setDisplay('pendingScanArea', 'none'); 
       setDisplay('scanInputContainer', 'block');
@@ -1436,9 +1523,14 @@
     function updateScanQty(idx, val) { 
        const qty = parseFloat(val) || 0; 
        scannedItems[idx].qty = qty; 
+       saveActionDraft();
     }
     
-    function removeScanItem(idx) { scannedItems.splice(idx, 1); renderScanItems(); }
+    function removeScanItem(idx) { 
+       scannedItems.splice(idx, 1); 
+       renderScanItems(); 
+       saveActionDraft();
+    }
 
     async function submitBulkAction() {
       if(scannedItems.length === 0) return Swal.fire({icon:'warning', title: currentLang==='en'?'No Items':'ไม่มีรายการสินค้า'});
@@ -1467,6 +1559,7 @@
         Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
         scannedItems = []; renderScanItems(); setValue('actionDocRef', '');
         setValue('actionInvoice', ''); setValue('actionRemark', '');
+        clearActionDraft();
         lastManualSyncTime = Date.now();
         fetchSystemData();
       } else {
@@ -1481,12 +1574,14 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = cleanStr(val);
+       const searchInput = val.toLowerCase().trim();
+       
        const matches = skus.filter(s => 
-           cleanStr(s.sku).includes(searchInput) || 
-           cleanStr(s.name).includes(searchInput) || 
+           String(s.sku).toLowerCase().includes(searchInput) || 
+           String(s.name).toLowerCase().includes(searchInput) || 
            String(s.barcode).includes(val)
-       ).slice(0, 6);
+       ).slice(0, 15);
+       
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
        matches.forEach(m => {
@@ -1508,14 +1603,14 @@
          
          setDisplay('countAutocompleteBox', 'none');
          const skus = globalData.skus || [];
-         const searchInput = cleanStr(input);
+         const searchInput = input.toLowerCase().trim();
          
          let found = skus.find(s => 
-             cleanStr(s.barcode) === searchInput || 
-             cleanStr(s.sku) === searchInput
+             String(s.barcode).toLowerCase().trim() === searchInput || 
+             String(s.sku).toLowerCase().trim() === searchInput
          );
          
-         if(!found) found = skus.find(s => cleanStr(s.name).includes(searchInput) || cleanStr(s.sku).includes(searchInput));
+         if(!found) found = skus.find(s => String(s.name).toLowerCase().includes(searchInput) || String(s.sku).toLowerCase().includes(searchInput));
 
          if(!found) {
             Swal.fire({icon:'error', title: currentLang==='en'?'Not Found':'ไม่พบสินค้า', text: currentLang==='en'?'Barcode or SKU is not in the system.':'ไม่มีบาร์โค้ดหรือรหัสนี้ในระบบ'});
@@ -1540,7 +1635,9 @@
       const qty = parseFloat(qtyEl.value);
       if(isNaN(qty) || qty < 0) return;
       
-      countItems.push({...pendingCountItem, qty: qty}); renderCountItems();
+      countItems.push({...pendingCountItem, qty: qty}); 
+      renderCountItems();
+      saveCountDraft();
       
       setDisplay('countPendingArea', 'none'); 
       setDisplay('countScanInputContainer', 'block');
@@ -1571,9 +1668,14 @@
     function updateCountQty(idx, val) { 
        const qty = parseFloat(val) || 0;
        countItems[idx].qty = qty; 
+       saveCountDraft();
     }
     
-    function removeCountItem(idx) { countItems.splice(idx, 1); renderCountItems(); }
+    function removeCountItem(idx) { 
+       countItems.splice(idx, 1); 
+       renderCountItems(); 
+       saveCountDraft();
+    }
 
     async function submitStockCount() {
       if(countItems.length === 0) return Swal.fire({icon:'warning', title: currentLang==='en'?'No Items':'ไม่มีรายการสินค้า'});
@@ -1594,6 +1696,7 @@
       if(res && res.success) {
         Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
         countItems = []; renderCountItems(); setValue('countRemark', '');
+        clearCountDraft();
         lastManualSyncTime = Date.now();
         fetchSystemData();
       } else {
@@ -1615,14 +1718,14 @@
        const branchInput = getEl('stockBranchFilter');
        if(!searchInput || !branchInput) return;
        
-       const search = cleanStr(searchInput.value);
+       const search = searchInput.value.toLowerCase().trim();
        const branch = branchInput.value;
        let filtered = globalData.stock || [];
        
        if(search || branch) {
            filtered = filtered.filter(r => {
                let match = true;
-               if(search && !cleanStr(r.sku).includes(search) && !cleanStr(r.name).includes(search)) match = false;
+               if(search && !String(r.sku).toLowerCase().includes(search) && !String(r.name).toLowerCase().includes(search)) match = false;
                if(branch && String(r.branch) !== branch) match = false;
                return match;
            });
