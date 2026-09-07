@@ -24,7 +24,7 @@
     .autocomplete-item { padding: 12px 16px; border-bottom: 1px solid #e4e1ee; cursor: pointer; transition: background 0.2s; background: #ffffff; }
     .autocomplete-item:hover { background-color: #f5f2ff; color: #4f46e5; }
     #autocompleteBox, #countAutocompleteBox { max-height: 250px; overflow-y: auto; border: 1px solid #e4e1ee; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 1040; display: none; opacity: 0; transition: opacity 0.3s ease; }
+    .sidebar-overlay { fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 1040; display: none; opacity: 0; transition: opacity 0.3s ease; }
     #sidebar { z-index: 1050; }
     select:disabled, input:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
   </style>
@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar (No bottom nav for mobile) -->
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -560,10 +560,11 @@
             </select>
           </div>
         </div>
+        
         <div class="flex flex-col gap-4 pb-20" id="historyList"></div>
         
         <!-- Floating Bulk Action Bar -->
-        <div id="bulkActionContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface-container-lowest border border-outline-variant shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4 z-[60] transition-all transform translate-y-24 opacity-0 pointer-events-auto">
+        <div id="bulkActionContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface-container-lowest border border-outline-variant shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4 z-[60] transition-all transform translate-y-24 opacity-0 pointer-events-none">
            <span class="font-bold text-sm text-on-surface"><span id="selCount">0</span> Selected</span>
            <button class="bg-error text-white px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90 active:scale-95 transition-all" onclick="deleteSelectedTx()">Delete Selected</button>
            <button class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-bold text-sm hover:bg-surface-container-highest active:scale-95 transition-all" onclick="clearSelection()">Cancel</button>
@@ -574,7 +575,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuLO5cSfFegkixNy-AzJvbhGYUBZUpERsr3Ro2wXKTLO_VOIiT9tsG-HWGfz9NusyNyA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCHQ0lR10m2QtLLwyhcNCgfC10_zkZ4a-Ezmy-6Y5sL2-0PRD7dkBEiEzV_2rahR4FpA/exec";
 
     const i18n = {
       en: {
@@ -1418,7 +1419,7 @@
            cleanMatch(s.sku).includes(searchInput) || 
            cleanMatch(s.name).includes(searchInput) || 
            (s.barcode && cleanMatch(s.barcode).includes(searchInput))
-       ).slice(0, 30); // โชว์ตัวเลือกให้มากขึ้น
+       ).slice(0, 30); 
        
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
@@ -1782,9 +1783,11 @@
        const bar = getEl('bulkActionContainer');
        if (selectedTxs.size > 0) {
           bar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+          bar.classList.add('pointer-events-auto');
           getEl('selCount').innerText = selectedTxs.size;
        } else {
           bar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+          bar.classList.remove('pointer-events-auto');
        }
     }
 
@@ -1925,7 +1928,7 @@
           }
 
           let isChecked = selectedTxs.has(JSON.stringify({txId: r.txId, sku: r.sku})) ? 'checked' : '';
-          let checkbox = canDelete ? `<input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer pointer-events-auto" ${isChecked} onchange="toggleTxSelection('${r.txId}', '${r.sku}', this)">` : '';
+          let checkbox = canDelete ? `<input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer pointer-events-auto shrink-0" ${isChecked} onchange="toggleTxSelection('${r.txId}', '${r.sku}', this)">` : '';
           
           let editBtn = canDelete ? `<button class="text-outline hover:text-primary transition-colors p-1 pointer-events-auto" onclick="editTxQty('${r.txId}', '${r.sku}', ${r.qty})" title="Edit"><span class="material-symbols-outlined text-xl">edit</span></button>` : '';
 
