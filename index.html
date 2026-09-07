@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar (No bottom nav for mobile) -->
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -567,7 +567,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXr5iiWHi9G8LNIi1IryrOzmB6MOOd0wYo1GdRz1NJQFIt833vYoh9cyOTRMiYkpQ6lw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGl4XaCNq82ERqN5xGrtQSP4nLzjn2OfCZ7d4XYYWzAxgqRg9MgLTxn1HOSpk9eDtQIQ/exec";
 
     const i18n = {
       en: {
@@ -1155,7 +1155,7 @@
     function applyPOFilter() {
       const poInputEl = getEl('filterPO');
       if(!poInputEl) return;
-      const poInputStr = poInputEl.value.toLowerCase().trim();
+      const poInputStr = String(poInputEl.value).trim().toLowerCase();
       let isAdmin = isUserAdmin();
       const br = (!isAdmin && currentUser.branch !== 'ALL') ? currentUser.branch : getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
@@ -1163,7 +1163,7 @@
 
       let tempItems = (globalData.pos || []).filter(p => {
         let match = true;
-        let itemPoStr = String(p.po).toLowerCase().trim();
+        let itemPoStr = String(p.po).trim().toLowerCase();
         if(poInputStr && !itemPoStr.includes(poInputStr)) match = false;
         if(br && p.branch !== br) match = false;
         if(sup && p.supplier !== sup) match = false;
@@ -1178,19 +1178,19 @@
         return match;
       });
 
-      let isExactPO = poInputStr !== '' && tempItems.some(p => String(p.po).toLowerCase().trim() === poInputStr);
+      let isExactPO = poInputStr !== '' && tempItems.some(p => String(p.po).trim().toLowerCase() === poInputStr);
       let processedItems = [];
       let totalQtyInPO = 0;
       let totalReceivedInPO = 0;
 
       tempItems.forEach(item => {
-         let normPo = String(item.po).toUpperCase().trim();
-         let normSku = String(item.sku).toUpperCase().trim();
+         let normPo = String(item.po).trim().toUpperCase();
+         let normSku = String(item.sku).trim().toUpperCase();
          let key = normPo + '_' + normSku;
          let received = parseFloat(globalData.poReceives[key]) || 0;
          let remaining = parseFloat(item.qty) - received;
          
-         if (String(item.po).toLowerCase().trim() === poInputStr) {
+         if (String(item.po).trim().toLowerCase() === poInputStr) {
              totalQtyInPO += parseFloat(item.qty) || 0;
              totalReceivedInPO += received;
          }
@@ -1217,7 +1217,7 @@
       setDisplay('poResultContainer', 'flex');
 
       if(poInputStr) {
-         let hist = (globalData.poHistory || []).filter(h => String(h.po).toLowerCase().trim().includes(poInputStr));
+         let hist = (globalData.poHistory || []).filter(h => String(h.po).trim().toLowerCase().includes(poInputStr));
          if(hist.length > 0) {
             const histHtml = hist.map(h => `
                <div class="px-4 py-3 bg-surface border border-outline-variant rounded-xl flex justify-between items-center">
@@ -1397,13 +1397,13 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = val.toLowerCase().trim();
+       const searchInput = String(val).toLowerCase().trim();
        
        const matches = skus.filter(s => 
            String(s.sku).toLowerCase().includes(searchInput) || 
            String(s.name).toLowerCase().includes(searchInput) || 
-           String(s.barcode).includes(val)
-       ).slice(0, 15);
+           (s.barcode && String(s.barcode).toLowerCase().includes(searchInput))
+       ).slice(0, 30); // โชว์ตัวเลือกให้มากขึ้น
        
        if(matches.length === 0) { box.style.display = 'none'; return; }
        
@@ -1433,7 +1433,7 @@
          const searchInput = input.toLowerCase().trim();
          
          let found = skus.find(s => 
-             String(s.barcode).toLowerCase().trim() === searchInput || 
+             (s.barcode && String(s.barcode).toLowerCase().trim() === searchInput) || 
              String(s.sku).toLowerCase().trim() === searchInput
          );
          
@@ -1574,12 +1574,12 @@
        box.innerHTML = '';
        if(!val || val.length < 2) { box.style.display = 'none'; return; }
        const skus = globalData.skus || [];
-       const searchInput = val.toLowerCase().trim();
+       const searchInput = String(val).toLowerCase().trim();
        
        const matches = skus.filter(s => 
            String(s.sku).toLowerCase().includes(searchInput) || 
            String(s.name).toLowerCase().includes(searchInput) || 
-           String(s.barcode).includes(val)
+           (s.barcode && String(s.barcode).toLowerCase().includes(searchInput))
        ).slice(0, 15);
        
        if(matches.length === 0) { box.style.display = 'none'; return; }
@@ -1606,7 +1606,7 @@
          const searchInput = input.toLowerCase().trim();
          
          let found = skus.find(s => 
-             String(s.barcode).toLowerCase().trim() === searchInput || 
+             (s.barcode && String(s.barcode).toLowerCase().trim() === searchInput) || 
              String(s.sku).toLowerCase().trim() === searchInput
          );
          
@@ -1718,7 +1718,7 @@
        const branchInput = getEl('stockBranchFilter');
        if(!searchInput || !branchInput) return;
        
-       const search = searchInput.value.toLowerCase().trim();
+       const search = String(searchInput.value).toLowerCase().trim();
        const branch = branchInput.value;
        let filtered = globalData.stock || [];
        
@@ -1830,7 +1830,7 @@
              if (r.fromBranch === currentUser.branch || r.toBranch === currentUser.branch) canDelete = true;
           }
 
-          let deleteBtn = canDelete ? `<button class="text-outline hover:text-error transition-colors p-1 pointer-events-auto" onclick="deleteTx('${r.txId}')" title="Delete"><span class="material-symbols-outlined text-xl">delete</span></button>` : '';
+          let deleteBtn = canDelete ? `<button class="text-outline hover:text-error transition-colors p-1 pointer-events-auto" onclick="deleteTx('${r.txId}', '${r.sku}')" title="Delete"><span class="material-symbols-outlined text-xl">delete</span></button>` : '';
 
           return `
           <div class="history-card relative bg-white border border-outline-variant rounded-2xl p-5 transition-shadow hover:shadow-md">
@@ -1861,7 +1861,7 @@
        setHtml('historyList', html);
     }
 
-    async function deleteTx(txId) {
+    async function deleteTx(txId, sku) {
        Swal.fire({
           title: currentLang === 'en' ? 'Delete Transaction?' : 'ต้องการลบรายการนี้?',
           text: currentLang === 'en' ? 'Stock will be reversed automatically (Note: Stock Count cannot be reversed).' : 'สต็อกจะถูกดึงกลับคืนอัตโนมัติ (หมายเหตุ: การนับสต็อกจะไม่ถูกดึงกลับ)',
@@ -1870,7 +1870,7 @@
           if (result.isConfirmed) {
              showLoading();
              lastManualSyncTime = Date.now();
-             const res = await apiCall('deleteTransaction', [txId]);
+             const res = await apiCall('deleteTransaction', [txId, sku]);
              if(res && res.success) { 
                 Swal.fire({icon: 'success', title: 'Deleted', showConfirmButton: false, timer: 1500}); 
                 lastManualSyncTime = Date.now();
