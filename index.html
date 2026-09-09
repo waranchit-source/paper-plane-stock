@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav for mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
     <div class="p-6 flex items-center gap-3">
@@ -581,7 +581,8 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwswEZW_3NzWVvuixE6dUZHikGaXOPs1BQ6Vw0ddnY3_SjewjJ87kQyw48MS_exQ2X6xQ/exec";
+    let isSubmitting = false;
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6r9WxunxmHOIys8s4iLz7JHqBjYhktZwHmALrd_lFiKZpg9WuAg6xptZNTVv2PaisVg/exec";
 
     const i18n = {
       en: {
@@ -1340,6 +1341,7 @@
       let hasOver = payload.some(x => x.qty > x.remaining);
 
       let proceed = async () => {
+          isSubmitting = true;
           showLoading();
           lastManualSyncTime = Date.now();
           
@@ -1352,6 +1354,7 @@
           } else {
              Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
           }
+          isSubmitting = false;
       };
 
       if (hasOver) {
@@ -1571,6 +1574,7 @@
       if(isDeduction && !fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Origin Branch':'กรุณาระบุสาขาต้นทาง'});
       if(isAddition && !tb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Destination Branch':'กรุณาระบุสาขาปลายทาง'});
 
+      isSubmitting = true;
       showLoading();
       lastManualSyncTime = Date.now();
       
@@ -1585,6 +1589,7 @@
       } else {
         Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
       }
+      isSubmitting = false;
     }
 
     /* ================= STOCK COUNT FUNCTIONS ================= */
@@ -1709,6 +1714,7 @@
       if(!fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Branch':'กรุณาระบุสาขา (Branch)'});
       if(!inCharge) return Swal.fire({icon:'warning', title: currentLang==='en'?'In Charge Required':'กรุณาระบุผู้รับผิดชอบ'});
 
+      isSubmitting = true;
       showLoading();
       lastManualSyncTime = Date.now();
       
@@ -1722,6 +1728,7 @@
       } else {
         Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
       }
+      isSubmitting = false;
     }
 
     function loadStock(isManual = false) {
@@ -1809,6 +1816,7 @@
           icon: 'warning', showCancelButton: true, confirmButtonColor: '#ba1a1a', cancelButtonColor: '#777587', confirmButtonText: currentLang === 'en' ? 'Delete' : 'ยืนยันลบ'
        }).then(async (result) => {
           if (result.isConfirmed) {
+             isSubmitting = true;
              showLoading();
              lastManualSyncTime = Date.now();
              const targets = Array.from(selectedTxs).map(item => JSON.parse(item));
@@ -1820,6 +1828,7 @@
                 fetchSystemData(); 
              } 
              else { Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Delete failed'}); }
+             isSubmitting = false;
           }
        });
     }
@@ -1838,6 +1847,7 @@
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
+                isSubmitting = true;
                 showLoading();
                 lastManualSyncTime = Date.now();
                 const newQty = parseFloat(result.value);
@@ -1850,6 +1860,7 @@
                 } else {
                     Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Edit failed'});
                 }
+                isSubmitting = false;
             }
         });
     }
@@ -1922,6 +1933,7 @@
           }
 
           let canDelete = false;
+          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
@@ -1965,31 +1977,12 @@
        setHtml('historyList', html);
     }
 
-    async function deleteTx(txId, sku) {
-       Swal.fire({
-          title: currentLang === 'en' ? 'Delete Transaction?' : 'ต้องการลบรายการนี้?',
-          text: currentLang === 'en' ? 'Stock will be reversed automatically.' : 'สต็อกจะถูกดึงกลับคืนอัตโนมัติ',
-          icon: 'warning', showCancelButton: true, confirmButtonColor: '#ba1a1a', cancelButtonColor: '#777587', confirmButtonText: currentLang === 'en' ? 'Delete' : 'ยืนยันลบ'
-       }).then(async (result) => {
-          if (result.isConfirmed) {
-             showLoading();
-             lastManualSyncTime = Date.now();
-             const res = await apiCall('deleteTransaction', [txId, sku]);
-             if(res && res.success) { 
-                Swal.fire({icon: 'success', title: 'Deleted', showConfirmButton: false, timer: 1500}); 
-                lastManualSyncTime = Date.now();
-                fetchSystemData(); 
-             } 
-             else { Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Delete failed'}); }
-          }
-       });
-    }
-
     let backgroundSyncTimer;
     function startBackgroundSync() {
        if (backgroundSyncTimer) clearInterval(backgroundSyncTimer);
        backgroundSyncTimer = setInterval(async () => {
           if (!currentUser || getEl('mainApp').classList.contains('hidden')) return;
+          if (isSubmitting) return; 
           if (Date.now() - lastManualSyncTime < 8000) return; 
           
           const res = await apiCall('getInitData', [], true);
