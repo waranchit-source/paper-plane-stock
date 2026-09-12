@@ -556,7 +556,7 @@
           <div class="flex flex-wrap gap-2 pointer-events-auto">
             <input type="date" id="historyDateFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
             
-            <select id="historyBranchFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" style="display:none;" onchange="renderHistorySilent()">
+            <select id="historyBranchFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" style="display:inline-block;" onchange="renderHistorySilent()">
                <option value="">All Branches</option>
             </select>
 
@@ -1010,39 +1010,18 @@
       let isAdmin = isUserAdmin();
       
       setHtml('regBranch', '<option value="ALL">ALL</option>' + branchHtml);
-      setHtml('filterBranch', '<option value="">All Branches</option>' + branchHtml);
-      setHtml('actionFromBranch', defaultOpt + branchHtml);
+      
+      const filterBranchHtml = isAdmin ? '<option value="">All Branches</option>' + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`;
+      setHtml('filterBranch', filterBranchHtml);
+      setHtml('actionFromBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
       setHtml('actionToBranch', defaultOpt + branchHtml);
-      setHtml('poReceiveBranch', defaultOpt + branchHtml);
-      setHtml('stockBranchFilter', '<option value="">All Branches</option>' + branchHtml);
-      setHtml('countBranch', defaultOpt + branchHtml);
+      setHtml('poReceiveBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
+      setHtml('stockBranchFilter', filterBranchHtml);
+      setHtml('countBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
 
       const histBranchFilter = getEl('historyBranchFilter');
       histBranchFilter.style.display = 'inline-block';
-      if (isAdmin) {
-          histBranchFilter.innerHTML = '<option value="">All Branches</option>' + branchHtml;
-          histBranchFilter.disabled = false;
-      } else {
-          histBranchFilter.innerHTML = `<option value="${currentUser.branch}">${currentUser.branch}</option>`;
-          histBranchFilter.disabled = true;
-      }
-
-      if(!isAdmin && currentUser && currentUser.branch !== 'ALL') {
-          setValue('poReceiveBranch', currentUser.branch);
-          getEl('poReceiveBranch').disabled = true;
-
-          setValue('countBranch', currentUser.branch);
-          getEl('countBranch').disabled = true;
-
-          setValue('actionFromBranch', currentUser.branch);
-          getEl('actionFromBranch').disabled = true;
-
-          setValue('filterBranch', currentUser.branch);
-          getEl('filterBranch').disabled = true;
-
-          setValue('stockBranchFilter', currentUser.branch);
-          getEl('stockBranchFilter').disabled = true;
-      }
+      histBranchFilter.innerHTML = filterBranchHtml;
 
       filterInChargeDropdowns();
 
@@ -1982,6 +1961,7 @@
           }
 
           let canDelete = false;
+          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
