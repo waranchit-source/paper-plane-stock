@@ -27,6 +27,7 @@
     .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); z-index: 1040; display: none; opacity: 0; transition: opacity 0.3s ease; }
     #sidebar { z-index: 1050; }
     select:disabled, input:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
+    .sidebar-text { transition: all 0.3s ease; }
   </style>
 
   <script id="tailwind-config">
@@ -148,58 +149,65 @@
     </div>
   </div>
 
-  <!-- Sidebar (No bottom nav for mobile) -->
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-  <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant w-72 transition-transform duration-300 -translate-x-full flex flex-col shadow-2xl md:shadow-none">
-    <div class="p-6 flex items-center gap-3">
-      <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
-      </div>
-      <div>
-        <h1 class="font-headline-md text-2xl font-black text-primary" data-i18n="appTitle">Paper Plane</h1>
-        <p class="text-xs text-outline font-label-sm">Global Logistics v1.2.0</p>
-      </div>
+  <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant transition-all duration-300 flex flex-col shadow-2xl md:shadow-none z-[1050] w-20">
+    <div class="p-4 md:p-6 flex items-center gap-3 overflow-hidden">
+        <button class="p-2 -ml-2 rounded-full hover:bg-surface-container transition-colors shrink-0 outline-none" onclick="toggleSidebar()">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="sidebar-text flex items-center gap-3 whitespace-nowrap opacity-0 w-0 hidden">
+            <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white shrink-0">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+            </div>
+            <div>
+                <h1 class="font-headline-md text-2xl font-black text-primary" data-i18n="appTitle">Paper Plane</h1>
+                <p class="text-xs text-outline font-label-sm">Global Logistics v1.2.0</p>
+            </div>
+        </div>
     </div>
     
-    <nav class="mt-2 flex-1 px-4 desktop-sidebar" id="mainNavLinks">
-      <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-primary bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewInbound', this)">
-        <span class="material-symbols-outlined">input</span><span class="font-body-md font-semibold" data-i18n="poTitle">Inbound (PO)</span>
+    <nav class="mt-2 flex-1 px-3 desktop-sidebar overflow-x-hidden" id="mainNavLinks">
+      <a class="nav-item-btn flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-primary bg-surface-container-high transition-all cursor-pointer group" onclick="switchTab('viewInbound', this)" title="Inbound (PO)">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">input</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="poTitle">Inbound (PO)</span>
       </a>
-      <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewAction', this)">
-        <span class="material-symbols-outlined">qr_code_scanner</span><span class="font-body-md font-semibold" data-i18n="actionTitle">Scan & Action</span>
+      <a class="nav-item-btn flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer group" onclick="switchTab('viewAction', this)" title="Scan & Action">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">qr_code_scanner</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="actionTitle">Scan & Action</span>
       </a>
-      <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewStockCount', this)">
-        <span class="material-symbols-outlined">fact_check</span><span class="font-body-md font-semibold" data-i18n="stockCountTitle">Stock Count</span>
+      <a class="nav-item-btn flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer group" onclick="switchTab('viewStockCount', this)" title="Stock Count">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">fact_check</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="stockCountTitle">Stock Count</span>
       </a>
-      <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewDashboard', this)">
-        <span class="material-symbols-outlined">inventory_2</span><span class="font-body-md font-semibold" data-i18n="stockTitle">Stock Balance</span>
+      <a class="nav-item-btn flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer group" onclick="switchTab('viewDashboard', this)" title="Stock Balance">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">inventory_2</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="stockTitle">Stock Balance</span>
       </a>
-      <a class="nav-item-btn flex items-center gap-4 px-4 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer" onclick="switchTab('viewHistory', this)">
-        <span class="material-symbols-outlined">history</span><span class="font-body-md font-semibold" data-i18n="historyTitle">Activity Log</span>
+      <a class="nav-item-btn flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer group" onclick="switchTab('viewHistory', this)" title="Activity Log">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">history</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="historyTitle">Activity Log</span>
       </a>
     </nav>
     
-    <div class="mt-auto m-4 p-3 rounded-2xl bg-surface border border-outline-variant/50 shadow-sm flex items-center gap-3" id="sidebarProfile">
-      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shrink-0 shadow-inner">
+    <div class="mt-auto m-3 p-3 rounded-2xl bg-surface border border-outline-variant/50 shadow-sm flex items-center gap-3 overflow-hidden" id="sidebarProfile">
+      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shrink-0 shadow-inner mx-auto sidebar-icon">
         <span class="font-bold text-sm tracking-wider" id="sidebarUserInitials"></span>
       </div>
-      <div class="overflow-hidden flex-1">
+      <div class="sidebar-text overflow-hidden flex-1 opacity-0 w-0 hidden">
         <p class="font-bold text-sm text-on-surface truncate leading-tight" id="sidebarUserName">User</p>
         <p class="text-[11px] text-on-surface-variant truncate font-medium mt-0.5" id="sidebarUserBranch">Branch</p>
       </div>
-      <button class="text-outline hover:bg-error/10 hover:text-error p-2 rounded-xl transition-all flex items-center justify-center pointer-events-auto" onclick="logout()" title="Logout">
+      <button class="sidebar-text text-outline hover:bg-error/10 hover:text-error p-2 rounded-xl transition-all flex items-center justify-center pointer-events-auto opacity-0 w-0 hidden" onclick="logout()" title="Logout">
         <span class="material-symbols-outlined text-[20px]">logout</span>
       </button>
     </div>
   </aside>
 
   <!-- Main View -->
-  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative transition-all duration-300 w-full pb-20 md:pb-8">
+  <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative transition-all duration-300 w-full pb-20 md:pb-8" style="margin-left: 5rem; width: calc(100% - 5rem);">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
       <div class="flex items-center gap-4">
-        <button class="p-2 rounded-full hover:bg-surface-container transition-colors pointer-events-auto relative z-50" onclick="toggleSidebar()">
-          <span class="material-symbols-outlined">menu</span>
-        </button>
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-primary hidden md:block" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
           <h2 class="font-bold text-xl text-on-surface font-headline-md" id="topBarTitle">Overview</h2>
@@ -582,7 +590,7 @@
 
   <script>
     let isSubmitting = false;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw6r9WxunxmHOIys8s4iLz7JHqBjYhktZwHmALrd_lFiKZpg9WuAg6xptZNTVv2PaisVg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxntVeGwEi1GJx2Lk0NZKuuzbITBC3G5R1DmuQXxSQ9a2IOMn0AhMBH-gzUXDxCUzGYlA/exec";
 
     const i18n = {
       en: {
@@ -851,12 +859,12 @@
              main.style.width = 'calc(100% - 18rem)';
           } else {
              sb.classList.add('-translate-x-full');
-             main.style.marginLeft = '0';
-             main.style.width = '100%';
+             main.style.marginLeft = '5rem';
+             main.style.width = 'calc(100% - 5rem)';
           }
        } else {
-          main.style.marginLeft = '0';
-          main.style.width = '100%';
+          main.style.marginLeft = '5rem';
+          main.style.width = 'calc(100% - 5rem)';
           if(isSidebarOpen) {
              sb.classList.remove('-translate-x-full');
              overlay.style.display = 'block';
@@ -873,25 +881,44 @@
       const sb = getEl('sidebar');
       const main = getEl('mainApp');
       const overlay = getEl('sidebarOverlay');
+      const texts = document.querySelectorAll('.sidebar-text');
+      const icons = document.querySelectorAll('.sidebar-icon');
       const isDesktop = window.innerWidth >= 768;
 
       isSidebarOpen = !isSidebarOpen;
 
       if(isSidebarOpen) {
+         sb.classList.remove('w-20');
+         sb.classList.add('w-72', 'translate-x-0');
          sb.classList.remove('-translate-x-full');
+         texts.forEach(el => { el.classList.remove('hidden', 'w-0', 'opacity-0'); });
+         icons.forEach(el => { el.classList.remove('mx-auto'); });
+         
          if(isDesktop) {
              main.style.marginLeft = '18rem'; 
              main.style.width = 'calc(100% - 18rem)';
+             overlay.style.display = 'none';
          } else {
+             main.style.marginLeft = '5rem'; 
+             main.style.width = 'calc(100% - 5rem)';
              overlay.style.display = 'block';
              setTimeout(() => overlay.style.opacity = '1', 10);
          }
       } else {
-         sb.classList.add('-translate-x-full');
+         sb.classList.remove('w-72');
+         sb.classList.add('w-20');
+         texts.forEach(el => { el.classList.add('hidden', 'w-0', 'opacity-0'); });
+         icons.forEach(el => { el.classList.add('mx-auto'); });
+         
          if(isDesktop) {
-             main.style.marginLeft = '0';
-             main.style.width = '100%';
+             sb.classList.remove('-translate-x-full');
+             main.style.marginLeft = '5rem';
+             main.style.width = 'calc(100% - 5rem)';
+             overlay.style.display = 'none';
          } else {
+             sb.classList.add('-translate-x-full');
+             main.style.marginLeft = '5rem';
+             main.style.width = 'calc(100% - 5rem)';
              overlay.style.opacity = '0';
              setTimeout(() => overlay.style.display = 'none', 300);
          }
@@ -1119,7 +1146,8 @@
          getEl('rememberMe').checked = false;
       }
       
-      isSidebarOpen = window.innerWidth >= 768;
+      isSidebarOpen = false;
+      toggleSidebar();
     }
 
     function showApp() {
@@ -1129,7 +1157,8 @@
       getEl('mainApp').classList.remove('hidden');
       getEl('mainApp').classList.add('flex');
       
-      isSidebarOpen = window.innerWidth >= 768;
+      isSidebarOpen = false;
+      applySidebarState();
       handleResize();
       
       let roleText = currentUser.role ? ` (${currentUser.role})` : '';
@@ -1865,6 +1894,75 @@
         });
     }
 
+    async function editFullTx(txId, oldSku, rawTime, currentType, currentQty, currentName) {
+        let d = new Date(rawTime);
+        let m = String(d.getMonth() + 1).padStart(2, '0');
+        let day = String(d.getDate()).padStart(2, '0');
+        let dateVal = !isNaN(d.getTime()) ? `${d.getFullYear()}-${m}-${day}` : '';
+
+        let typeOptions = ['Inbound', 'Outbound', 'Transfer', 'Entertain', 'RD', 'Return to Stock', 'FOC Inbound', 'FOC Outbound', 'Stock Count'];
+        let typeHtml = typeOptions.map(t => `<option value="${t}" ${cleanMatch(t) === cleanMatch(currentType) ? 'selected' : ''}>${t}</option>`).join('');
+        
+        let skuHtml = (globalData.skus || []).map(s => `<option value="${s.sku}" data-name="${s.name}" ${s.sku === oldSku ? 'selected' : ''}>${s.sku} - ${s.name}</option>`).join('');
+
+        const formHtml = `
+            <div class="flex flex-col gap-3 text-left">
+                <div>
+                    <label class="text-xs font-bold text-on-surface-variant">Transaction Date</label>
+                    <input type="date" id="swal-date" class="w-full rounded-xl border border-outline-variant p-2" value="${dateVal}">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-on-surface-variant">Status</label>
+                    <select id="swal-type" class="w-full rounded-xl border border-outline-variant p-2">${typeHtml}</select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-on-surface-variant">SKU / Item Name</label>
+                    <select id="swal-sku" class="w-full rounded-xl border border-outline-variant p-2" onchange="document.getElementById('swal-name').value = this.options[this.selectedIndex].getAttribute('data-name');">
+                        ${skuHtml}
+                    </select>
+                    <input type="hidden" id="swal-name" value="${currentName}">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-on-surface-variant">Quantity</label>
+                    <input type="number" id="swal-qty" class="w-full rounded-xl border border-outline-variant p-2" value="${currentQty}" min="0.01" step="0.01">
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: currentLang === 'en' ? 'Edit Transaction' : 'แก้ไขรายการ',
+            html: formHtml,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            confirmButtonColor: '#3525cd',
+            preConfirm: () => {
+                return {
+                    date: document.getElementById('swal-date').value,
+                    type: document.getElementById('swal-type').value,
+                    sku: document.getElementById('swal-sku').value,
+                    name: document.getElementById('swal-name').value,
+                    qty: parseFloat(document.getElementById('swal-qty').value)
+                };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                isSubmitting = true;
+                showLoading();
+                lastManualSyncTime = Date.now();
+                const target = { txId: txId, sku: oldSku };
+                const res = await apiCall('editTransaction', [target, result.value]);
+                if (res && res.success) {
+                    Swal.fire({icon: 'success', title: 'Saved', showConfirmButton: false, timer: 1500});
+                    lastManualSyncTime = Date.now();
+                    fetchSystemData();
+                } else {
+                    Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Edit failed'});
+                }
+                isSubmitting = false;
+            }
+        });
+    }
+
     function renderHistorySilent() {
        const df = getEl('historyDateFilter');
        const tf = getEl('historyTypeFilter');
@@ -1914,11 +2012,16 @@
           filtered = filtered.filter(r => cleanMatch(r.type) === cleanType);
        }
 
+       if (!dateFilter && typeFilter === 'All' && (!branchFilter || branchFilter === 'ALL')) {
+          filtered = filtered.slice(0, 100);
+       }
+
        const html = filtered.map(r => {
           let cType = cleanMatch(r.type);
           let isAdd = ['inbound', 'returntostock', 'focinbound'].includes(cType);
           let isSub = ['outbound', 'entertain', 'rd', 'focoutbound'].includes(cType);
           let isCount = cType === 'stockcount';
+          let isTransfer = cType === 'transfer';
           
           let typeColorClass = isAdd ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : (isSub ? 'text-rose-700 bg-rose-50 border-rose-200' : (isCount ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-primary bg-primary/10 border-primary/20'));
           let qtyColorClass = isAdd ? 'text-emerald-600' : (isSub ? 'text-rose-600' : (isCount ? 'text-purple-600' : 'text-primary'));
@@ -1933,7 +2036,6 @@
           }
 
           let canDelete = false;
-          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
@@ -1943,7 +2045,7 @@
           let isChecked = selectedTxs.has(JSON.stringify({txId: r.txId, sku: r.sku})) ? 'checked' : '';
           let checkbox = canDelete ? `<input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer pointer-events-auto shrink-0" ${isChecked} onchange="toggleTxSelection('${r.txId}', '${r.sku}', this)">` : '';
           
-          let editBtn = canDelete ? `<button class="text-outline hover:text-primary transition-colors p-1 pointer-events-auto" onclick="editTxQty('${r.txId}', '${r.sku}', ${r.qty})" title="Edit"><span class="material-symbols-outlined text-xl">edit</span></button>` : '';
+          let editBtn = canDelete ? `<button class="text-outline hover:text-primary transition-colors p-1 pointer-events-auto" onclick="editFullTx('${r.txId}', '${r.sku}', '${r.time}', '${r.type}', ${r.qty}, '${r.name}')" title="Edit"><span class="material-symbols-outlined text-xl">edit</span></button>` : '';
 
           return `
           <div class="history-card relative bg-white border border-outline-variant rounded-2xl p-5 transition-shadow hover:shadow-md flex items-center gap-4">
