@@ -851,10 +851,14 @@
        const icons = document.querySelectorAll('.sidebar-icon');
        const isDesktop = window.innerWidth >= 768;
 
+       if (!currentUser) {
+          sb.classList.add('-translate-x-full');
+          return;
+       }
+
        if(isSidebarOpen) {
-          sb.classList.remove('w-20');
+          sb.classList.remove('w-20', '-translate-x-full');
           sb.classList.add('w-72', 'translate-x-0');
-          sb.classList.remove('-translate-x-full');
           texts.forEach(el => { el.classList.remove('hidden', 'w-0', 'opacity-0'); });
           icons.forEach(el => { el.classList.remove('mx-auto'); });
           
@@ -869,23 +873,15 @@
               setTimeout(() => overlay.style.opacity = '1', 10);
           }
        } else {
-          sb.classList.remove('w-72');
-          sb.classList.add('w-20');
+          sb.classList.remove('w-72', '-translate-x-full');
+          sb.classList.add('w-20', 'translate-x-0');
           texts.forEach(el => { el.classList.add('hidden', 'w-0', 'opacity-0'); });
           icons.forEach(el => { el.classList.add('mx-auto'); });
           
-          if(isDesktop) {
-              sb.classList.remove('-translate-x-full');
-              main.style.marginLeft = '5rem';
-              main.style.width = 'calc(100% - 5rem)';
-              overlay.style.display = 'none';
-          } else {
-              sb.classList.add('-translate-x-full');
-              main.style.marginLeft = '5rem';
-              main.style.width = 'calc(100% - 5rem)';
-              overlay.style.opacity = '0';
-              setTimeout(() => overlay.style.display = 'none', 300);
-          }
+          main.style.marginLeft = '5rem';
+          main.style.width = 'calc(100% - 5rem)';
+          overlay.style.opacity = '0';
+          setTimeout(() => overlay.style.display = 'none', 300);
        }
     }
 
@@ -1813,6 +1809,38 @@
              isSubmitting = false;
           }
        });
+    }
+
+    async function editTxQty(txId, sku, currentQty) {
+        Swal.fire({
+            title: currentLang === 'en' ? 'Edit Quantity' : 'แก้ไขจำนวน',
+            input: 'number',
+            inputLabel: currentLang === 'en' ? 'New Quantity:' : 'ระบุจำนวนใหม่:',
+            inputValue: currentQty,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            confirmButtonColor: '#3525cd',
+            inputValidator: (value) => {
+                if (!value || parseFloat(value) < 0) return 'Please enter a valid number';
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                isSubmitting = true;
+                showLoading();
+                lastManualSyncTime = Date.now();
+                const newQty = parseFloat(result.value);
+                const target = { txId: txId, sku: sku };
+                const res = await apiCall('editTransaction', [target, newQty]);
+                if (res && res.success) {
+                    Swal.fire({icon: 'success', title: 'Saved', showConfirmButton: false, timer: 1500});
+                    lastManualSyncTime = Date.now();
+                    fetchSystemData();
+                } else {
+                    Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Edit failed'});
+                }
+                isSubmitting = false;
+            }
+        });
     }
 
     async function editFullTx(txId, oldSku, rawTime, currentType, currentQty, currentName) {
