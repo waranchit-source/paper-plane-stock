@@ -590,7 +590,7 @@
 
   <script>
     let isSubmitting = false;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxntVeGwEi1GJx2Lk0NZKuuzbITBC3G5R1DmuQXxSQ9a2IOMn0AhMBH-gzUXDxCUzGYlA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys-XgI5STwcXEAAmcJJIF-pKDu4VAxizVe7h9D-xzr01ERcrIA05emVxyk2kF34vGf1Q/exec";
 
     const i18n = {
       en: {
@@ -843,86 +843,60 @@
       window.addEventListener('resize', handleResize);
     };
 
-    function handleResize() {
-       if(!currentUser || getEl('mainApp').classList.contains('hidden')) return;
+    function applySidebarState() {
        const sb = getEl('sidebar');
        const main = getEl('mainApp');
        const overlay = getEl('sidebarOverlay');
+       const texts = document.querySelectorAll('.sidebar-text');
+       const icons = document.querySelectorAll('.sidebar-icon');
        const isDesktop = window.innerWidth >= 768;
 
-       if(isDesktop) {
-          overlay.style.display = 'none';
-          overlay.style.opacity = '0';
-          if(isSidebarOpen) {
-             sb.classList.remove('-translate-x-full');
-             main.style.marginLeft = '18rem'; 
-             main.style.width = 'calc(100% - 18rem)';
+       if(isSidebarOpen) {
+          sb.classList.remove('w-20');
+          sb.classList.add('w-72', 'translate-x-0');
+          sb.classList.remove('-translate-x-full');
+          texts.forEach(el => { el.classList.remove('hidden', 'w-0', 'opacity-0'); });
+          icons.forEach(el => { el.classList.remove('mx-auto'); });
+          
+          if(isDesktop) {
+              main.style.marginLeft = '18rem'; 
+              main.style.width = 'calc(100% - 18rem)';
+              overlay.style.display = 'none';
           } else {
-             sb.classList.add('-translate-x-full');
-             main.style.marginLeft = '5rem';
-             main.style.width = 'calc(100% - 5rem)';
+              main.style.marginLeft = '5rem'; 
+              main.style.width = 'calc(100% - 5rem)';
+              overlay.style.display = 'block';
+              setTimeout(() => overlay.style.opacity = '1', 10);
           }
        } else {
-          main.style.marginLeft = '5rem';
-          main.style.width = 'calc(100% - 5rem)';
-          if(isSidebarOpen) {
-             sb.classList.remove('-translate-x-full');
-             overlay.style.display = 'block';
-             overlay.style.opacity = '1';
+          sb.classList.remove('w-72');
+          sb.classList.add('w-20');
+          texts.forEach(el => { el.classList.add('hidden', 'w-0', 'opacity-0'); });
+          icons.forEach(el => { el.classList.add('mx-auto'); });
+          
+          if(isDesktop) {
+              sb.classList.remove('-translate-x-full');
+              main.style.marginLeft = '5rem';
+              main.style.width = 'calc(100% - 5rem)';
+              overlay.style.display = 'none';
           } else {
-             sb.classList.add('-translate-x-full');
-             overlay.style.display = 'none';
-             overlay.style.opacity = '0';
+              sb.classList.add('-translate-x-full');
+              main.style.marginLeft = '5rem';
+              main.style.width = 'calc(100% - 5rem)';
+              overlay.style.opacity = '0';
+              setTimeout(() => overlay.style.display = 'none', 300);
           }
        }
     }
 
+    function handleResize() {
+       if(!currentUser || getEl('mainApp').classList.contains('hidden')) return;
+       applySidebarState();
+    }
+
     function toggleSidebar() {
-      const sb = getEl('sidebar');
-      const main = getEl('mainApp');
-      const overlay = getEl('sidebarOverlay');
-      const texts = document.querySelectorAll('.sidebar-text');
-      const icons = document.querySelectorAll('.sidebar-icon');
-      const isDesktop = window.innerWidth >= 768;
-
       isSidebarOpen = !isSidebarOpen;
-
-      if(isSidebarOpen) {
-         sb.classList.remove('w-20');
-         sb.classList.add('w-72', 'translate-x-0');
-         sb.classList.remove('-translate-x-full');
-         texts.forEach(el => { el.classList.remove('hidden', 'w-0', 'opacity-0'); });
-         icons.forEach(el => { el.classList.remove('mx-auto'); });
-         
-         if(isDesktop) {
-             main.style.marginLeft = '18rem'; 
-             main.style.width = 'calc(100% - 18rem)';
-             overlay.style.display = 'none';
-         } else {
-             main.style.marginLeft = '5rem'; 
-             main.style.width = 'calc(100% - 5rem)';
-             overlay.style.display = 'block';
-             setTimeout(() => overlay.style.opacity = '1', 10);
-         }
-      } else {
-         sb.classList.remove('w-72');
-         sb.classList.add('w-20');
-         texts.forEach(el => { el.classList.add('hidden', 'w-0', 'opacity-0'); });
-         icons.forEach(el => { el.classList.add('mx-auto'); });
-         
-         if(isDesktop) {
-             sb.classList.remove('-translate-x-full');
-             main.style.marginLeft = '5rem';
-             main.style.width = 'calc(100% - 5rem)';
-             overlay.style.display = 'none';
-         } else {
-             sb.classList.add('-translate-x-full');
-             main.style.marginLeft = '5rem';
-             main.style.width = 'calc(100% - 5rem)';
-             overlay.style.opacity = '0';
-             setTimeout(() => overlay.style.display = 'none', 300);
-         }
-      }
+      applySidebarState();
     }
 
     async function handleManualRefresh() {
@@ -1044,11 +1018,13 @@
       setHtml('countBranch', defaultOpt + branchHtml);
 
       const histBranchFilter = getEl('historyBranchFilter');
+      histBranchFilter.style.display = 'inline-block';
       if (isAdmin) {
           histBranchFilter.innerHTML = '<option value="">All Branches</option>' + branchHtml;
-          histBranchFilter.style.display = 'inline-block';
+          histBranchFilter.disabled = false;
       } else {
-          histBranchFilter.style.display = 'none';
+          histBranchFilter.innerHTML = `<option value="${currentUser.branch}">${currentUser.branch}</option>`;
+          histBranchFilter.disabled = true;
       }
 
       if(!isAdmin && currentUser && currentUser.branch !== 'ALL') {
@@ -1147,7 +1123,7 @@
       }
       
       isSidebarOpen = false;
-      toggleSidebar();
+      applySidebarState();
     }
 
     function showApp() {
@@ -1157,13 +1133,11 @@
       getEl('mainApp').classList.remove('hidden');
       getEl('mainApp').classList.add('flex');
       
-      isSidebarOpen = false;
+      isSidebarOpen = window.innerWidth >= 768;
       applySidebarState();
-      handleResize();
       
-      let roleText = currentUser.role ? ` (${currentUser.role})` : '';
-      getEl('sidebarUserName').innerText = `${currentUser.fname} ${currentUser.lname}${roleText}`;
-      getEl('sidebarUserBranch').innerText = currentUser.branch;
+      getEl('sidebarUserName').innerText = `${currentUser.fname} ${currentUser.lname}`;
+      getEl('sidebarUserBranch').innerText = currentUser.role;
       const initials = (currentUser.fname.charAt(0) + (currentUser.lname ? currentUser.lname.charAt(0) : '')).toUpperCase();
       getEl('sidebarUserInitials').innerText = initials;
       
@@ -1862,38 +1836,6 @@
        });
     }
 
-    async function editTxQty(txId, sku, currentQty) {
-        Swal.fire({
-            title: currentLang === 'en' ? 'Edit Quantity' : 'แก้ไขจำนวน',
-            input: 'number',
-            inputLabel: currentLang === 'en' ? 'New Quantity:' : 'ระบุจำนวนใหม่:',
-            inputValue: currentQty,
-            showCancelButton: true,
-            confirmButtonText: 'Save',
-            confirmButtonColor: '#3525cd',
-            inputValidator: (value) => {
-                if (!value || parseFloat(value) < 0) return 'Please enter a valid number';
-            }
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                isSubmitting = true;
-                showLoading();
-                lastManualSyncTime = Date.now();
-                const newQty = parseFloat(result.value);
-                const target = { txId: txId, sku: sku };
-                const res = await apiCall('editTransaction', [target, newQty]);
-                if (res && res.success) {
-                    Swal.fire({icon: 'success', title: 'Saved', showConfirmButton: false, timer: 1500});
-                    lastManualSyncTime = Date.now();
-                    fetchSystemData();
-                } else {
-                    Swal.fire({icon: 'error', title: 'Error', text: res ? res.message : 'Edit failed'});
-                }
-                isSubmitting = false;
-            }
-        });
-    }
-
     async function editFullTx(txId, oldSku, rawTime, currentType, currentQty, currentName) {
         let d = new Date(rawTime);
         let m = String(d.getMonth() + 1).padStart(2, '0');
@@ -1903,7 +1845,8 @@
         let typeOptions = ['Inbound', 'Outbound', 'Transfer', 'Entertain', 'RD', 'Return to Stock', 'FOC Inbound', 'FOC Outbound', 'Stock Count'];
         let typeHtml = typeOptions.map(t => `<option value="${t}" ${cleanMatch(t) === cleanMatch(currentType) ? 'selected' : ''}>${t}</option>`).join('');
         
-        let skuHtml = (globalData.skus || []).map(s => `<option value="${s.sku}" data-name="${s.name}" ${s.sku === oldSku ? 'selected' : ''}>${s.sku} - ${s.name}</option>`).join('');
+        let skuHtml = (globalData.skus || []).map(s => `<option value="${s.sku}">${s.sku} - ${s.name}</option>`).join('');
+        let datalistHtml = `<datalist id="edit-sku-list">${skuHtml}</datalist>`;
 
         const formHtml = `
             <div class="flex flex-col gap-3 text-left">
@@ -1917,10 +1860,13 @@
                 </div>
                 <div>
                     <label class="text-xs font-bold text-on-surface-variant">SKU / Item Name</label>
-                    <select id="swal-sku" class="w-full rounded-xl border border-outline-variant p-2" onchange="document.getElementById('swal-name').value = this.options[this.selectedIndex].getAttribute('data-name');">
-                        ${skuHtml}
-                    </select>
+                    <input type="text" id="swal-sku" list="edit-sku-list" class="w-full rounded-xl border border-outline-variant p-2" value="${oldSku}" autocomplete="off" oninput="
+                        let selectedSku = this.value;
+                        let skuData = globalData.skus.find(s => s.sku === selectedSku);
+                        if(skuData) document.getElementById('swal-name').value = skuData.name;
+                    ">
                     <input type="hidden" id="swal-name" value="${currentName}">
+                    ${datalistHtml}
                 </div>
                 <div>
                     <label class="text-xs font-bold text-on-surface-variant">Quantity</label>
