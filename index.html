@@ -149,7 +149,7 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (No bottom nav for mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant transition-all duration-300 flex flex-col shadow-2xl md:shadow-none z-[1050] w-20">
     <div class="p-4 md:p-6 flex items-center gap-3 overflow-hidden">
@@ -590,7 +590,7 @@
 
   <script>
     let isSubmitting = false;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys-XgI5STwcXEAAmcJJIF-pKDu4VAxizVe7h9D-xzr01ERcrIA05emVxyk2kF34vGf1Q/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZ1Q8dOV9FKY8LxSLxQnIJ5-yV9MV14jm6GSqODxc0CY_ufcVKDn5jARo9IaGW5IiTSg/exec";
 
     const i18n = {
       en: {
@@ -972,6 +972,7 @@
        if(!globalData) return;
        const inCharges = globalData.inCharges || [];
        let isAdmin = isUserAdmin();
+       let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
        
        let poBranch = getEl('poReceiveBranch').value;
        let actionBranch = getEl('actionFromBranch').value;
@@ -979,10 +980,10 @@
 
        function getHtmlFor(br) {
            let filtered = inCharges;
-           if (!isAdmin && currentUser && currentUser.branch !== 'ALL') {
-               filtered = inCharges.filter(c => c.branch === currentUser.branch || !c.branch);
-           } else if (br) {
+           if (br) {
                filtered = inCharges.filter(c => c.branch === br || c.branch === 'ALL' || !c.branch);
+           } else if (!isAdmin && userBranches.length > 0) {
+               filtered = inCharges.filter(c => userBranches.includes(c.branch) || c.branch === 'ALL' || !c.branch);
            }
            return `<option value="">Select User</option>` + filtered.map(c => {
                let display = c.branch ? `${c.name} - ${c.branch}` : c.name;
@@ -1000,24 +1001,53 @@
       const branches = globalData.branches || [];
       const pos = globalData.pos || [];
 
-      const branchHtml = branches.map(b => `<option value="${b}">${b}</option>`).join('');
+      const allBranchesHtml = branches.map(b => `<option value="${b}">${b}</option>`).join('');
       const defaultOpt = `<option value="">${i18n[currentLang].selectBranch}</option>`;
       
       let isAdmin = isUserAdmin();
+      let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : (currentUser ? [currentUser.branch] : []);
       
-      setHtml('regBranch', '<option value="ALL">ALL</option>' + branchHtml);
-      
-      const filterBranchHtml = isAdmin ? '<option value="">All Branches</option>' + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`;
-      setHtml('filterBranch', filterBranchHtml);
-      setHtml('actionFromBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
-      setHtml('actionToBranch', defaultOpt + branchHtml);
-      setHtml('poReceiveBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
-      setHtml('stockBranchFilter', filterBranchHtml);
-      setHtml('countBranch', isAdmin ? defaultOpt + branchHtml : `<option value="${currentUser.branch}">${currentUser.branch}</option>`);
+      setHtml('regBranch', '<option value="ALL">ALL</option>' + allBranchesHtml);
+      setHtml('actionToBranch', defaultOpt + allBranchesHtml); 
+
+      let specificBranchHtml = '';
+      if (isAdmin) {
+          specificBranchHtml = '<option value="">All Branches</option>' + allBranchesHtml;
+      } else {
+          if (userBranches.length > 1) {
+              specificBranchHtml = defaultOpt + userBranches.map(b => `<option value="${b}">${b}</option>`).join('');
+          } else {
+              specificBranchHtml = `<option value="${userBranches[0]}">${userBranches[0]}</option>`;
+          }
+      }
+
+      setHtml('filterBranch', specificBranchHtml);
+      setHtml('actionFromBranch', specificBranchHtml);
+      setHtml('poReceiveBranch', specificBranchHtml);
+      setHtml('stockBranchFilter', specificBranchHtml);
+      setHtml('countBranch', specificBranchHtml);
 
       const histBranchFilter = getEl('historyBranchFilter');
       histBranchFilter.style.display = 'inline-block';
-      histBranchFilter.innerHTML = filterBranchHtml;
+      histBranchFilter.innerHTML = specificBranchHtml;
+
+      let shouldDisable = !isAdmin && userBranches.length === 1;
+      
+      getEl('filterBranch').disabled = shouldDisable;
+      getEl('actionFromBranch').disabled = shouldDisable;
+      getEl('poReceiveBranch').disabled = shouldDisable;
+      getEl('stockBranchFilter').disabled = shouldDisable;
+      getEl('countBranch').disabled = shouldDisable;
+      histBranchFilter.disabled = shouldDisable;
+
+      if (shouldDisable && userBranches.length > 0) {
+          setValue('filterBranch', userBranches[0]);
+          setValue('actionFromBranch', userBranches[0]);
+          setValue('poReceiveBranch', userBranches[0]);
+          setValue('stockBranchFilter', userBranches[0]);
+          setValue('countBranch', userBranches[0]);
+          setValue('historyBranchFilter', userBranches[0]);
+      }
 
       filterInChargeDropdowns();
 
@@ -1153,7 +1183,8 @@
       if(!poInputEl) return;
       const poInputStr = String(poInputEl.value).trim().toUpperCase();
       let isAdmin = isUserAdmin();
-      const br = (!isAdmin && currentUser.branch !== 'ALL') ? currentUser.branch : getEl('filterBranch').value.trim();
+      let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
+      const br = getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
       const dt = getEl('filterDate').value;
 
@@ -1166,6 +1197,7 @@
         let match = true;
         if(poInputStr && !itemPoStr.includes(poInputStr.replace(/\s+/g, ''))) match = false;
         if(br && p.branch !== br) match = false;
+        else if(!br && !isAdmin && userBranches.length > 0 && !userBranches.includes(p.branch)) match = false;
         if(sup && p.supplier !== sup) match = false;
         if(dt) {
            try {
@@ -1725,13 +1757,17 @@
        
        const search = cleanMatch(searchInput.value);
        const branch = branchInput.value;
+       let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
+       let isAdmin = isUserAdmin();
+       
        let filtered = globalData.stock || [];
        
-       if(search || branch) {
+       if(search || branch || (!isAdmin && userBranches.length > 0)) {
            filtered = filtered.filter(r => {
                let match = true;
                if(search && !cleanMatch(r.sku).includes(search) && !cleanMatch(r.name).includes(search)) match = false;
                if(branch && String(r.branch) !== branch) match = false;
+               else if(!branch && !isAdmin && userBranches.length > 0 && !userBranches.includes(r.branch)) match = false;
                return match;
            });
        }
@@ -1924,20 +1960,16 @@
        
        const dateFilter = df.value;
        const typeFilter = tf.value;
-       let branchFilter = '';
+       let branchFilter = bf ? bf.value : '';
+       let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
        
        let filtered = globalData.history || [];
-
        let isAdmin = isUserAdmin();
-
-       if(isAdmin) {
-          branchFilter = bf ? bf.value : '';
-       } else if (currentUser) {
-          branchFilter = currentUser.branch;
-       }
 
        if (branchFilter && branchFilter !== 'ALL') {
           filtered = filtered.filter(r => r.fromBranch === branchFilter || r.toBranch === branchFilter);
+       } else if (!isAdmin && userBranches.length > 0) {
+          filtered = filtered.filter(r => userBranches.includes(r.fromBranch) || userBranches.includes(r.toBranch));
        }
        
        if(dateFilter) {
@@ -1989,7 +2021,6 @@
           }
 
           let canDelete = false;
-          let role = currentUser ? currentUser.role : 'User';
           if (isAdmin) {
              canDelete = true;
           } else if (isUserManager()) {
