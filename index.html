@@ -149,7 +149,7 @@
     </div>
   </div>
 
-  <!-- Sidebar (No bottom nav for mobile) -->
+  <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant transition-all duration-300 flex flex-col shadow-2xl md:shadow-none z-[1050] w-20">
     <div class="p-4 md:p-6 flex items-center gap-3 overflow-hidden">
@@ -590,7 +590,7 @@
 
   <script>
     let isSubmitting = false;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZ1Q8dOV9FKY8LxSLxQnIJ5-yV9MV14jm6GSqODxc0CY_ufcVKDn5jARo9IaGW5IiTSg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsn_qUesnp8bUDM1U13nFt6uKJBwk_72bKkJET2wmpCVYxwCEOUF85BwnXPApgS0eEog/exec";
 
     const i18n = {
       en: {
@@ -1016,8 +1016,10 @@
       } else {
           if (userBranches.length > 1) {
               specificBranchHtml = defaultOpt + userBranches.map(b => `<option value="${b}">${b}</option>`).join('');
-          } else {
+          } else if (userBranches.length === 1) {
               specificBranchHtml = `<option value="${userBranches[0]}">${userBranches[0]}</option>`;
+          } else {
+              specificBranchHtml = defaultOpt;
           }
       }
 
