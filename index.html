@@ -590,7 +590,7 @@
 
   <script>
     let isSubmitting = false;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsn_qUesnp8bUDM1U13nFt6uKJBwk_72bKkJET2wmpCVYxwCEOUF85BwnXPApgS0eEog/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwl1yAM7PiNP44EhKP9SPF6OX20YADQ0sPQAkSxOsxW5uVr1681EAclshq7aJdm521S6Q/exec";
 
     const i18n = {
       en: {
@@ -971,20 +971,28 @@
     function filterInChargeDropdowns() {
        if(!globalData) return;
        const inCharges = globalData.inCharges || [];
-       let isAdmin = isUserAdmin();
+       let isAdminOrManager = isUserAdmin() || isUserManager();
        let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
        
        let poBranch = getEl('poReceiveBranch').value;
        let actionBranch = getEl('actionFromBranch').value;
        let countBranch = getEl('countBranch').value;
 
-       function getHtmlFor(br) {
+       function getHtmlFor(selectedBranch) {
            let filtered = inCharges;
-           if (br) {
-               filtered = inCharges.filter(c => c.branch === br || c.branch === 'ALL' || !c.branch);
-           } else if (!isAdmin && userBranches.length > 0) {
-               filtered = inCharges.filter(c => userBranches.includes(c.branch) || c.branch === 'ALL' || !c.branch);
+           
+           if (isAdminOrManager) {
+               if (selectedBranch) {
+                   filtered = inCharges.filter(c => c.branch === selectedBranch || c.branch === 'ALL' || !c.branch);
+               }
+           } else {
+               if (selectedBranch) {
+                   filtered = inCharges.filter(c => c.branch === selectedBranch || c.branch === 'ALL' || !c.branch);
+               } else if (userBranches.length > 0) {
+                   filtered = inCharges.filter(c => userBranches.includes(c.branch) || c.branch === 'ALL' || !c.branch);
+               }
            }
+           
            return `<option value="">Select User</option>` + filtered.map(c => {
                let display = c.branch ? `${c.name} - ${c.branch}` : c.name;
                return `<option value="${display}">${display}</option>`;
@@ -1185,6 +1193,7 @@
       if(!poInputEl) return;
       const poInputStr = String(poInputEl.value).trim().toUpperCase();
       let isAdmin = isUserAdmin();
+      let isManager = isUserManager();
       let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
       const br = getEl('filterBranch').value.trim();
       const sup = getEl('filterSupplier').value.trim();
@@ -1199,7 +1208,7 @@
         let match = true;
         if(poInputStr && !itemPoStr.includes(poInputStr.replace(/\s+/g, ''))) match = false;
         if(br && p.branch !== br) match = false;
-        else if(!br && !isAdmin && userBranches.length > 0 && !userBranches.includes(p.branch)) match = false;
+        else if(!br && !isAdmin && !isManager && userBranches.length > 0 && !userBranches.includes(p.branch)) match = false;
         if(sup && p.supplier !== sup) match = false;
         if(dt) {
            try {
@@ -1761,15 +1770,16 @@
        const branch = branchInput.value;
        let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
        let isAdmin = isUserAdmin();
+       let isManager = isUserManager();
        
        let filtered = globalData.stock || [];
        
-       if(search || branch || (!isAdmin && userBranches.length > 0)) {
+       if(search || branch || (!isAdmin && !isManager && userBranches.length > 0)) {
            filtered = filtered.filter(r => {
                let match = true;
                if(search && !cleanMatch(r.sku).includes(search) && !cleanMatch(r.name).includes(search)) match = false;
                if(branch && String(r.branch) !== branch) match = false;
-               else if(!branch && !isAdmin && userBranches.length > 0 && !userBranches.includes(r.branch)) match = false;
+               else if(!branch && !isAdmin && !isManager && userBranches.length > 0 && !userBranches.includes(r.branch)) match = false;
                return match;
            });
        }
@@ -1967,11 +1977,18 @@
        
        let filtered = globalData.history || [];
        let isAdmin = isUserAdmin();
+       let isManager = isUserManager();
 
-       if (branchFilter && branchFilter !== 'ALL') {
-          filtered = filtered.filter(r => r.fromBranch === branchFilter || r.toBranch === branchFilter);
-       } else if (!isAdmin && userBranches.length > 0) {
-          filtered = filtered.filter(r => userBranches.includes(r.fromBranch) || userBranches.includes(r.toBranch));
+       if (isAdmin || isManager) {
+           if (branchFilter && branchFilter !== 'ALL') {
+               filtered = filtered.filter(r => r.fromBranch === branchFilter || r.toBranch === branchFilter);
+           }
+       } else {
+           if (branchFilter && branchFilter !== 'ALL') {
+               filtered = filtered.filter(r => r.fromBranch === branchFilter || r.toBranch === branchFilter);
+           } else if (userBranches.length > 0) {
+               filtered = filtered.filter(r => userBranches.includes(r.fromBranch) || userBranches.includes(r.toBranch));
+           }
        }
        
        if(dateFilter) {
@@ -2025,7 +2042,7 @@
           let canDelete = false;
           if (isAdmin) {
              canDelete = true;
-          } else if (isUserManager()) {
+          } else if (isManager) {
              if (r.fromBranch === currentUser.branch || r.toBranch === currentUser.branch) canDelete = true;
           }
 
