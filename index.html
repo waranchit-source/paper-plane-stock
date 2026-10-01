@@ -7,7 +7,7 @@
   
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&icon_names=arrow_downward,arrow_upward,barcode_scanner,calendar_today,check_circle,close,delete,done_all,edit,error,fact_check,flight_takeoff,history,image,input,inventory_2,logout,menu,person,person_add,photo_camera,qr_code_scanner,refresh,search,send,sync,sync_alt,visibility,visibility_off&display=block" rel="stylesheet"/>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
@@ -28,6 +28,68 @@
     #sidebar { z-index: 1050; }
     select:disabled, input:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
     .sidebar-text { transition: all 0.3s ease; }
+    .badge-type { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+    #editSkuBox, #editToBranchBox { max-height: 200px; overflow-y: auto; border: 1px solid #e4e1ee; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); background: #ffffff; margin-top: 4px; }
+    .edit-ac-item { padding: 8px 12px; border-bottom: 1px solid #e4e1ee; cursor: pointer; font-size: 13px; text-align: left; }
+    .edit-ac-item:hover { background-color: #f5f2ff; color: #4f46e5; }
+    html, body { max-width: 100%; }
+    .resp-wrap { container-type: inline-size; }
+    @media (max-width: 767px) {
+      .resp-table { min-width: 0 !important; width: 100%; }
+      .resp-table thead { display: none; }
+      .resp-table tbody { display: block; }
+      .resp-table tbody tr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px; }
+      .resp-table tbody td { display: block; padding: 0 !important; border: none !important; width: auto !important; }
+      .resp-table tbody td.rt-full { flex: 1 1 100%; min-width: 0; }
+      .resp-table tbody td.rt-grow { flex: 1 1 0; min-width: 0; }
+      .resp-table tbody td.rt-right { margin-left: auto; }
+      .resp-table tbody td.rt-o1 { order: 1; }
+      .resp-table tbody td.rt-o2 { order: 2; }
+      .resp-table tbody td.rt-o3 { order: 3; }
+      .resp-table tbody td.rt-o4 { order: 4; }
+      .resp-table tbody td.rt-o5 { order: 5; }
+      .resp-table tbody td.rt-o6 { order: 6; }
+      .resp-table tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #777587; margin-bottom: 2px; text-align: left; }
+      .resp-table .truncate { max-width: none !important; white-space: normal; overflow: visible; }
+      .swal2-popup { width: 94vw !important; padding: 1rem !important; }
+      .swal2-title { font-size: 1.25rem !important; }
+    }
+    @container (max-width: 559px) {
+      .resp-table { min-width: 0 !important; width: 100%; }
+      .resp-table thead { display: none; }
+      .resp-table tbody { display: block; }
+      .resp-table tbody tr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px; }
+      .resp-table tbody td { display: block; padding: 0 !important; border: none !important; width: auto !important; }
+      .resp-table tbody td.rt-full { flex: 1 1 100%; min-width: 0; }
+      .resp-table tbody td.rt-grow { flex: 1 1 0; min-width: 0; }
+      .resp-table tbody td.rt-right { margin-left: auto; }
+      .resp-table tbody td.rt-o1 { order: 1; }
+      .resp-table tbody td.rt-o2 { order: 2; }
+      .resp-table tbody td.rt-o3 { order: 3; }
+      .resp-table tbody td.rt-o4 { order: 4; }
+      .resp-table tbody td.rt-o5 { order: 5; }
+      .resp-table tbody td.rt-o6 { order: 6; }
+      .resp-table tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #777587; margin-bottom: 2px; text-align: left; }
+      .resp-table .truncate { max-width: none !important; white-space: normal; overflow: visible; }
+    }
+    @container (max-width: 759px) {
+      .resp-table.resp-wide { min-width: 0 !important; width: 100%; }
+      .resp-table.resp-wide thead { display: none; }
+      .resp-table.resp-wide tbody { display: block; }
+      .resp-table.resp-wide tbody tr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px; }
+      .resp-table.resp-wide tbody td { display: block; padding: 0 !important; border: none !important; width: auto !important; }
+      .resp-table.resp-wide tbody td.rt-full { flex: 1 1 100%; min-width: 0; }
+      .resp-table.resp-wide tbody td.rt-grow { flex: 1 1 0; min-width: 0; }
+      .resp-table.resp-wide tbody td.rt-right { margin-left: auto; }
+      .resp-table.resp-wide tbody td.rt-o1 { order: 1; }
+      .resp-table.resp-wide tbody td.rt-o2 { order: 2; }
+      .resp-table.resp-wide tbody td.rt-o3 { order: 3; }
+      .resp-table.resp-wide tbody td.rt-o4 { order: 4; }
+      .resp-table.resp-wide tbody td.rt-o5 { order: 5; }
+      .resp-table.resp-wide tbody td.rt-o6 { order: 6; }
+      .resp-table.resp-wide tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #777587; margin-bottom: 2px; text-align: left; }
+      .resp-table.resp-wide .truncate { max-width: none !important; white-space: normal; overflow: visible; }
+    }
   </style>
 
   <script id="tailwind-config">
@@ -51,7 +113,7 @@
             "surface": "#fcf8ff", "secondary-fixed": "#d3e4fe", "tertiary-container": "#a44100",
             "surface-variant": "#e4e1ee", "on-error": "#ffffff", "secondary-container": "#d0e1fb",
             "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#38485d", "on-secondary-container": "#54647a",
-            "on-primary": "#ffffff", "inverse-surface": "#302f39"
+            "on-primary": "#ffffff", "inverse-surface": "#302f39", "success": "#059669"
           },
           fontFamily: {
             "headline-lg": ["Hanken Grotesk"], "body-md": ["Inter"], "label-md": ["Inter"],
@@ -151,7 +213,7 @@
 
   <!-- Sidebar -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-  <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant transition-all duration-300 flex flex-col shadow-2xl md:shadow-none z-[1050] w-20">
+  <aside id="sidebar" class="fixed left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant transition-all duration-300 flex flex-col shadow-2xl md:shadow-none z-[1050] w-20 -translate-x-full">
     <div class="p-4 md:p-6 flex items-center gap-3 overflow-hidden">
         <button class="p-2 -ml-2 rounded-full hover:bg-surface-container transition-colors shrink-0 outline-none" onclick="toggleSidebar()">
             <span class="material-symbols-outlined">menu</span>
@@ -207,13 +269,16 @@
   <!-- Main View -->
   <main id="mainApp" class="hidden flex-1 flex-col min-h-screen relative transition-all duration-300 w-full pb-20 md:pb-8" style="margin-left: 5rem; width: calc(100% - 5rem);">
     <header class="flex justify-between items-center px-4 md:px-8 h-16 w-full z-30 sticky top-0 bg-surface-container-lowest border-b border-outline-variant shadow-sm">
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 md:gap-4 min-w-0">
+        <button class="md:hidden p-2 -ml-2 rounded-full hover:bg-surface-container transition-colors shrink-0 outline-none flex items-center justify-center" onclick="toggleSidebar()" title="Menu">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="flex items-center gap-2 min-w-0">
           <span class="material-symbols-outlined text-primary hidden md:block" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
-          <h2 class="font-bold text-xl text-on-surface font-headline-md" id="topBarTitle">Overview</h2>
+          <h2 class="font-bold text-lg md:text-xl text-on-surface font-headline-md truncate" id="topBarTitle">Overview</h2>
         </div>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 md:gap-3 shrink-0">
         <button onclick="handleManualRefresh()" class="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg font-bold text-sm transition-colors flex items-center gap-1 pointer-events-auto shadow-sm" title="Refresh Data">
            <span class="material-symbols-outlined text-[18px]">sync</span>
            <span class="hidden md:inline">Refresh</span>
@@ -264,16 +329,16 @@
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold" data-i18n="poResults">Pending Receive</h3>
                 <button onclick="receiveAllPO()" class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1 font-bold pointer-events-auto" data-i18n="receiveAllBtn"><span class="material-symbols-outlined text-sm">done_all</span> Select All</button>
               </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[700px]">
+              <div class="resp-wrap overflow-x-auto">
+                <table class="resp-table resp-wide w-full text-left border-collapse min-w-[640px]">
                   <thead>
                     <tr class="bg-surface-container-high/30">
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thPoNumber">PO Number</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thQty">Remaining</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider w-32 text-center" data-i18n="thReceive">Receive</th>
+                      <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thPoNumber">PO Number</th>
+                      <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
+                      <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thQty">Remaining</th>
+                      <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider w-32 text-center" data-i18n="thReceive">Receive</th>
                       <th class="px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center">Photo</th>
-                      <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
+                      <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
                     </tr>
                   </thead>
                   <tbody id="poItemsTable" class="divide-y divide-outline-variant/30"></tbody>
@@ -418,14 +483,14 @@
             </div>
           </div>
 
-          <div class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest mb-5">
-            <table class="w-full text-left border-collapse min-w-[600px]">
+          <div class="resp-wrap overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest mb-5">
+            <table class="resp-table w-full text-left border-collapse min-w-[520px]">
               <thead>
                 <tr class="bg-surface-container-high/30">
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thUom">UOM</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center w-32" data-i18n="thQty">Qty</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center">Photo</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thUom">UOM</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center w-32" data-i18n="thQty">Qty</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center">Photo</th>
                   <th class="px-4 py-3 border-b border-outline-variant"></th>
                 </tr>
               </thead>
@@ -490,13 +555,13 @@
             </div>
           </div>
 
-          <div class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest mb-5">
-            <table class="w-full text-left border-collapse min-w-[600px]">
+          <div class="resp-wrap overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest mb-5">
+            <table class="resp-table w-full text-left border-collapse min-w-[520px]">
               <thead>
                 <tr class="bg-surface-container-high/30">
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thUom">UOM</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center w-32">Actual Qty</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">SKU / Name</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center" data-i18n="thUom">UOM</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-center w-32">Actual Qty</th>
                   <th class="px-4 py-3 border-b border-outline-variant"></th>
                 </tr>
               </thead>
@@ -534,13 +599,13 @@
              </select>
           </div>
 
-          <div class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
-            <table class="w-full text-left border-collapse min-w-[500px]">
+          <div class="resp-wrap overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
+            <table class="resp-table w-full text-left border-collapse min-w-[420px]">
               <thead>
                 <tr class="bg-surface-container-high/30">
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">Item Details</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
-                  <th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-right" data-i18n="thQty">Quantity</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thSKU">Item Details</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider" data-i18n="thBranch">Branch</th>
+                  <th class="px-3 lg:px-4 py-3 font-label-sm text-label-sm text-on-surface-variant border-b border-outline-variant uppercase tracking-wider text-right" data-i18n="thQty">Quantity</th>
                 </tr>
               </thead>
               <tbody id="stockTableBody" class="divide-y divide-outline-variant/30"></tbody>
@@ -551,16 +616,25 @@
 
       <!-- ================= ACTIVITY LOG ================= -->
       <div id="viewHistory" class="view-section">
-        <div class="mb-5 flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div class="mb-5 flex flex-col gap-3">
           <h5 class="text-xl font-bold text-on-surface flex items-center gap-2 font-headline-md" data-i18n="historyTitle">Activity Log</h5>
-          <div class="flex flex-wrap gap-2 pointer-events-auto">
-            <input type="date" id="historyDateFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
-            
-            <select id="historyBranchFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" style="display:inline-block;" onchange="renderHistorySilent()">
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 pointer-events-auto">
+            <div class="relative col-span-2 md:col-span-4 lg:col-span-2">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+              <input type="text" id="historySearch" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" placeholder="Search SKU or Product Name..." oninput="renderHistoryDebounced()" autocomplete="off">
+            </div>
+
+            <input type="date" id="historyDateFilter" class="w-full min-w-0 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
+
+            <select id="historyBranchFilter" class="w-full min-w-0 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
                <option value="">All Branches</option>
             </select>
 
-            <select id="historyTypeFilter" class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
+            <select id="historyToBranchFilter" class="w-full min-w-0 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
+               <option value="">To Branch: All</option>
+            </select>
+
+            <select id="historyTypeFilter" class="w-full min-w-0 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-sm outline-none focus:border-primary font-body-md" onchange="renderHistorySilent()">
               <option value="All">All Status</option>
               <option value="Inbound">Inbound</option>
               <option value="Outbound">Outbound</option>
@@ -639,6 +713,10 @@
        return String(str || '').toLowerCase().replace(/\s+/g, '');
     }
 
+    function escHtml(v) {
+       return String(v === null || v === undefined ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     function isUserAdmin() {
        if (!currentUser) return false;
        return String(currentUser.role).toUpperCase() === 'ADMIN';
@@ -667,23 +745,102 @@
         document.cookie = key + "=; max-age=0; path=/";
     }
 
+    let ppDbPromise = null;
+    let draftSelectValues = null;
+
+    function ppDb() {
+        if (ppDbPromise) return ppDbPromise;
+        ppDbPromise = new Promise((resolve) => {
+            try {
+                const req = indexedDB.open('pp_store', 1);
+                req.onupgradeneeded = () => { req.result.createObjectStore('kv'); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+                req.onblocked = () => resolve(null);
+            } catch (e) { resolve(null); }
+        });
+        return ppDbPromise;
+    }
+
+    function idbOp(mode, fn) {
+        const op = ppDb().then(db => new Promise((resolve) => {
+            if (!db) return resolve(undefined);
+            try {
+                const tx = db.transaction('kv', mode);
+                const req = fn(tx.objectStore('kv'));
+                tx.oncomplete = () => resolve(req ? req.result : undefined);
+                tx.onerror = () => resolve(undefined);
+                tx.onabort = () => resolve(undefined);
+            } catch (e) { resolve(undefined); }
+        }));
+        const guard = new Promise((resolve) => setTimeout(() => resolve(undefined), 4000));
+        return Promise.race([op, guard]);
+    }
+
+    function idbGet(key) { return idbOp('readonly', s => s.get(key)); }
+    function idbSet(key, val) { return idbOp('readwrite', s => s.put(val, key)); }
+    function idbDel(key) { return idbOp('readwrite', s => s.delete(key)); }
+
+    function newItemUid() {
+        return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function draftItemsForStorage(items) {
+        return items.map(it => {
+            const copy = Object.assign({}, it);
+            if (copy.uid && !copy.photoInline) delete copy.photoBase64;
+            delete copy._src;
+            return copy;
+        });
+    }
+
+    function storeItemPhoto(item) {
+        if (!item || !item.photoBase64) return;
+        if (!item.uid) item.uid = newItemUid();
+        idbSet('photo_' + item.uid, item.photoBase64).then(res => {
+            if (res === undefined) {
+                item.photoInline = true;
+                saveActionDraft();
+            }
+        });
+    }
+
+    async function hydrateDraftPhotos() {
+        let changed = false;
+        for (const it of scannedItems) {
+            if (!it.photoBase64 && !it.photoUrl && it.uid) {
+                const p = await idbGet('photo_' + it.uid);
+                if (p) { it.photoBase64 = p; changed = true; }
+            }
+        }
+        if (changed) renderScanItems();
+    }
+
     function saveActionDraft() {
         const draft = {
-            items: scannedItems,
+            items: draftItemsForStorage(scannedItems),
             type: getEl('actionType').value,
-            from: getEl('actionFromBranch').value,
-            to: getEl('actionToBranch').value,
+            from: getEl('actionFromBranch').value || (draftSelectValues && draftSelectValues.actionFromBranch) || '',
+            to: getEl('actionToBranch').value || (draftSelectValues && draftSelectValues.actionToBranch) || '',
             doc: getEl('actionDocRef').value,
             inv: getEl('actionInvoice').value,
             remark: getEl('actionRemark').value,
-            inCharge: getEl('actionInCharge').value,
+            inCharge: getEl('actionInCharge').value || (draftSelectValues && draftSelectValues.actionInCharge) || '',
             date: getEl('actionDate').value
         };
-        localStorage.setItem('pp_draft_action', JSON.stringify(draft));
+        try {
+            localStorage.setItem('pp_draft_action', JSON.stringify(draft));
+        } catch (e) {
+            try {
+                draft.items = draft.items.map(it => { const c = Object.assign({}, it); delete c.photoBase64; return c; });
+                localStorage.setItem('pp_draft_action', JSON.stringify(draft));
+            } catch (e2) {}
+        }
     }
 
     function loadActionDraft() {
-        const saved = localStorage.getItem('pp_draft_action');
+        let saved = null;
+        try { saved = localStorage.getItem('pp_draft_action'); } catch (e) {}
         if (saved) {
             try {
                 const draft = JSON.parse(saved);
@@ -695,34 +852,40 @@
                 if (draft.inv) setValue('actionInvoice', draft.inv);
                 if (draft.remark) setValue('actionRemark', draft.remark);
                 if (draft.date) setValue('actionDate', draft.date);
-                
+
                 toggleActionFields();
                 filterInChargeDropdowns();
-                
+
                 if (draft.inCharge) setValue('actionInCharge', draft.inCharge);
-                
+
+                draftSelectValues = Object.assign(draftSelectValues || {}, { actionFromBranch: draft.from || '', actionToBranch: draft.to || '', actionInCharge: draft.inCharge || '' });
+                scannedItems.forEach(it => { if (it.photoBase64 && !it.uid) storeItemPhoto(it); });
+
                 renderScanItems();
+                hydrateDraftPhotos();
             } catch(e){}
         }
     }
 
-    function clearActionDraft() {
-        localStorage.removeItem('pp_draft_action');
+    function clearActionDraft(items) {
+        try { localStorage.removeItem('pp_draft_action'); } catch (e) {}
+        (items || []).forEach(it => { if (it && it.uid) idbDel('photo_' + it.uid); });
     }
 
     function saveCountDraft() {
         const draft = {
             items: countItems,
-            branch: getEl('countBranch').value,
+            branch: getEl('countBranch').value || (draftSelectValues && draftSelectValues.countBranch) || '',
             remark: getEl('countRemark').value,
-            inCharge: getEl('countInCharge').value,
+            inCharge: getEl('countInCharge').value || (draftSelectValues && draftSelectValues.countInCharge) || '',
             date: getEl('countDate').value
         };
-        localStorage.setItem('pp_draft_count', JSON.stringify(draft));
+        try { localStorage.setItem('pp_draft_count', JSON.stringify(draft)); } catch (e) {}
     }
 
     function loadCountDraft() {
-        const saved = localStorage.getItem('pp_draft_count');
+        let saved = null;
+        try { saved = localStorage.getItem('pp_draft_count'); } catch (e) {}
         if (saved) {
             try {
                 const draft = JSON.parse(saved);
@@ -730,30 +893,32 @@
                 if (draft.branch) setValue('countBranch', draft.branch);
                 if (draft.remark) setValue('countRemark', draft.remark);
                 if (draft.date) setValue('countDate', draft.date);
-                
+
                 filterInChargeDropdowns();
-                
+
                 if (draft.inCharge) setValue('countInCharge', draft.inCharge);
-                
+
+                draftSelectValues = Object.assign(draftSelectValues || {}, { countBranch: draft.branch || '', countInCharge: draft.inCharge || '' });
+
                 renderCountItems();
             } catch(e){}
         }
     }
 
     function clearCountDraft() {
-        localStorage.removeItem('pp_draft_count');
+        try { localStorage.removeItem('pp_draft_count'); } catch (e) {}
     }
 
     function compressImage(file, maxWidth, maxHeight, quality) {
         return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = event => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
+            let url = null;
+            try { url = URL.createObjectURL(file); } catch (e) { reject(new Error(currentLang === 'en' ? 'Cannot read this file' : 'อ่านไฟล์รูปนี้ไม่ได้')); return; }
+            const img = new Image();
+            img.onload = () => {
+                try {
                     const canvas = document.createElement('canvas');
-                    let width = img.width; let height = img.height;
+                    let width = img.naturalWidth || img.width; let height = img.naturalHeight || img.height;
+                    if (!width || !height) throw new Error(currentLang === 'en' ? 'Image is empty' : 'รูปภาพว่างเปล่า');
                     if (width > height) {
                         if (width > maxWidth) { height = Math.round(height *= maxWidth / width); width = maxWidth; }
                     } else {
@@ -762,35 +927,295 @@
                     canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', quality));
-                };
-                img.onerror = error => reject(error);
+                    let q = quality;
+                    let out = canvas.toDataURL('image/jpeg', q);
+                    while (out.length > 400000 && q > 0.4) {
+                        q = Math.round((q - 0.1) * 10) / 10;
+                        out = canvas.toDataURL('image/jpeg', q);
+                    }
+                    URL.revokeObjectURL(url);
+                    if (!out || out.length < 200 || out.indexOf('data:image/') !== 0) { reject(new Error(currentLang === 'en' ? 'Image conversion failed' : 'แปลงรูปภาพไม่สำเร็จ')); return; }
+                    resolve(out);
+                } catch (e) {
+                    URL.revokeObjectURL(url);
+                    reject(e);
+                }
             };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error(currentLang === 'en' ? 'This file is not a supported image' : 'ไฟล์นี้ไม่ใช่รูปภาพที่รองรับ'));
+            };
+            img.src = url;
         });
     }
 
-    async function apiCall(action, args = [], isGet = false) {
-      if (SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") {
-        console.error("Please set SCRIPT_URL in the HTML file.");
-        return null;
-      }
-      try {
-        if (isGet) {
-          const url = `${SCRIPT_URL}?action=${action}&t=${new Date().getTime()}`;
-          const res = await fetch(url);
-          return await res.json();
-        } else {
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: action, args: args }),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-          });
-          return await res.json();
+    function sleepMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    function apiErrorMessage(type, detail) {
+        const en = currentLang === 'en';
+        if (type === 'offline') return en ? 'No internet connection.' : 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต';
+        if (type === 'timeout') return en ? 'The server took too long to respond (timeout).' : 'เซิร์ฟเวอร์ตอบกลับช้าเกินกำหนด (หมดเวลารอ)';
+        if (type === 'http') return (en ? 'The server returned an error' : 'เซิร์ฟเวอร์ตอบกลับผิดปกติ') + (detail ? ' (' + detail + ')' : '');
+        if (type === 'badresponse') return (en ? 'The server returned an invalid response (Google may have timed out or hit a quota).' : 'เซิร์ฟเวอร์ตอบกลับข้อมูลไม่ถูกต้อง (Google อาจประมวลผลเกินเวลาหรือเกินโควต้า)') + (detail ? ' [' + detail + ']' : '');
+        return en ? 'Could not reach the server (unstable connection or the request was rejected).' : 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ (สัญญาณอินเทอร์เน็ตไม่เสถียร หรือเซิร์ฟเวอร์ปฏิเสธคำขอชั่วคราว)';
+    }
+
+    async function apiRequest(action, args = [], opts = {}) {
+        if (SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") {
+            console.error("Please set SCRIPT_URL in the HTML file.");
+            return { ok: false, type: 'config', message: 'SCRIPT_URL is not set' };
         }
-      } catch (e) {
-         console.error("API Error:", e);
-         return null;
-      }
+        const isGet = !!opts.isGet;
+        const timeoutMs = opts.timeout || (isGet ? 45000 : 90000);
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const timer = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
+        try {
+            let res;
+            if (isGet) {
+                let url = `${SCRIPT_URL}?action=${action}&t=${new Date().getTime()}`;
+                const q = opts.query || {};
+                Object.keys(q).forEach(k => { if (q[k] !== undefined && q[k] !== null && q[k] !== '') url += `&${k}=${encodeURIComponent(q[k])}`; });
+                res = await fetch(url, ctrl ? { signal: ctrl.signal } : {});
+            } else {
+                const init = {
+                    method: 'POST',
+                    body: JSON.stringify({ action: action, args: args }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                };
+                if (ctrl) init.signal = ctrl.signal;
+                res = await fetch(SCRIPT_URL, init);
+            }
+            const text = await res.text();
+            if (!res.ok) return { ok: false, type: 'http', message: apiErrorMessage('http', 'HTTP ' + res.status) };
+            try {
+                return { ok: true, data: JSON.parse(text) };
+            } catch (parseErr) {
+                const snippet = String(text || '').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
+                return { ok: false, type: 'badresponse', message: apiErrorMessage('badresponse', snippet) };
+            }
+        } catch (e) {
+            console.error("API Error:", e);
+            let type = 'network';
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) type = 'offline';
+            else if (e && e.name === 'AbortError') type = 'timeout';
+            return { ok: false, type: type, message: apiErrorMessage(type) };
+        } finally {
+            if (timer) clearTimeout(timer);
+        }
+    }
+
+    async function apiCall(action, args = [], isGet = false) {
+      const r = await apiRequest(action, args, { isGet: isGet });
+      return r.ok ? r.data : null;
+    }
+
+    function newRequestId() {
+        return 'R' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6);
+    }
+
+    function itemsSignature(items) {
+        return (items || []).map(it => String(it.sku) + ':' + String(it.qty)).join('|');
+    }
+
+    function getPendingSubmit() {
+        try {
+            const raw = localStorage.getItem('pp_pending_submit');
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+
+    function setPendingSubmit(obj) {
+        try { localStorage.setItem('pp_pending_submit', JSON.stringify(obj)); } catch (e) {}
+    }
+
+    function clearPendingSubmit() {
+        try { localStorage.removeItem('pp_pending_submit'); } catch (e) {}
+    }
+
+    function showSubmitProgress(text) {
+        Swal.fire({
+            title: currentLang === 'en' ? 'Processing...' : 'กำลังดำเนินการ...',
+            html: `<div id="ppSubmitStatus" class="text-sm text-on-surface-variant">${escHtml(text)}</div>`,
+            background: '#fff', color: '#1b1b24', allowOutsideClick: false, allowEscapeKey: false, showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+    }
+
+    function setSubmitStatus(text) {
+        const el = document.getElementById('ppSubmitStatus');
+        if (el) el.innerText = text;
+    }
+
+    async function resolvePendingRequest(requestId, maxAttempts) {
+        let lastMessage = '';
+        const attempts = maxAttempts || 4;
+        for (let attempt = 1; attempt <= attempts; attempt++) {
+            const r = await apiRequest('resolveSubmission', [requestId], { timeout: 45000 });
+            if (r.ok && r.data && r.data.success && (r.data.status === 'committed' || r.data.status === 'cancelled')) {
+                return { state: r.data.status };
+            }
+            lastMessage = r.ok ? ((r.data && r.data.message) || 'Unknown') : r.message;
+            if (attempt < attempts) await sleepMs(1500 * attempt);
+        }
+        return { state: 'unknown', message: lastMessage };
+    }
+
+    async function uploadOnePhoto(item) {
+        let lastMessage = '';
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            const r = await apiRequest('uploadPhoto', [item.photoBase64, 'TXN_' + item.sku], { timeout: 60000 });
+            if (r.ok && r.data && r.data.success && r.data.url) {
+                item.photoUrl = r.data.url;
+                if (item._src) item._src.photoUrl = r.data.url;
+                return { ok: true };
+            }
+            lastMessage = r.ok ? ((r.data && r.data.message) || 'Upload failed') : r.message;
+            if (!r.ok && r.type === 'offline') break;
+            if (attempt < 3) await sleepMs(1000 * attempt);
+        }
+        return { ok: false, message: lastMessage };
+    }
+
+    async function uploadPendingPhotos(items) {
+        const queue = items.filter(it => it.photoBase64 && !it.photoUrl);
+        const total = queue.length;
+        if (total === 0) return { ok: true };
+        let done = 0;
+        let failure = null;
+        const en = currentLang === 'en';
+        setSubmitStatus((en ? 'Uploading photos ' : 'กำลังอัปโหลดรูป ') + `0/${total}`);
+        const worker = async () => {
+            while (queue.length > 0 && !failure) {
+                const item = queue.shift();
+                const r = await uploadOnePhoto(item);
+                if (!r.ok) { failure = { sku: item.sku, message: r.message }; return; }
+                done++;
+                setSubmitStatus((en ? 'Uploading photos ' : 'กำลังอัปโหลดรูป ') + `${done}/${total}`);
+            }
+        };
+        await Promise.all([worker(), worker()]);
+        if (failure) {
+            return { ok: false, message: (en ? `Photo upload failed for ${failure.sku}: ` : `อัปโหลดรูปของ ${failure.sku} ไม่สำเร็จ: `) + failure.message };
+        }
+        return { ok: true };
+    }
+
+    async function safeSubmitTransaction(cfg) {
+        const en = currentLang === 'en';
+        const sig = itemsSignature(cfg.items);
+
+        const pend = getPendingSubmit();
+        if (pend && pend.requestId) {
+            setSubmitStatus(en ? 'Checking the previous unconfirmed submission...' : 'กำลังตรวจสอบรายการที่ส่งค้างไว้ก่อนหน้า...');
+            const pr = await resolvePendingRequest(pend.requestId);
+            if (pr.state === 'unknown') return { success: false, unknown: true, message: pr.message };
+            clearPendingSubmit();
+            if (pr.state === 'committed') {
+                if (pend.kind === cfg.kind && pend.sig === sig) return { success: true, recovered: true };
+                return { success: false, recoveredOther: true, sameKind: pend.kind === cfg.kind };
+            }
+        }
+
+        const up = await uploadPendingPhotos(cfg.items);
+        if (cfg.onPhotosUploaded) { try { cfg.onPhotosUploaded(); } catch (e) {} }
+        if (!up.ok) return { success: false, message: up.message };
+
+        const payloadItems = cfg.items.map(it => {
+            const c = Object.assign({}, it);
+            delete c.photoBase64; delete c.photoInline; delete c._src; delete c.uid;
+            return c;
+        });
+
+        let lastMessage = '';
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            const requestId = newRequestId();
+            setPendingSubmit({ requestId: requestId, kind: cfg.kind, sig: sig, at: Date.now() });
+            setSubmitStatus(attempt === 1 ? (en ? 'Saving transaction...' : 'กำลังบันทึกรายการ...') : (en ? `Retrying save (attempt ${attempt})...` : `กำลังลองบันทึกใหม่ (ครั้งที่ ${attempt})...`));
+            const r = await apiRequest('processBulkTransaction', [cfg.type, cfg.ref, cfg.invoice, cfg.remark, payloadItems, cfg.tb, cfg.fb, currentUser.id, cfg.txDate, cfg.inCharge, null, requestId], { timeout: 90000 });
+
+            if (r.ok && r.data && r.data.success) {
+                clearPendingSubmit();
+                return { success: true };
+            }
+            if (r.ok && r.data && typeof r.data === 'object') {
+                clearPendingSubmit();
+                lastMessage = r.data.message || 'Submission failed';
+                if (r.data.retryable && attempt < 3) { await sleepMs(1500 * attempt); continue; }
+                return { success: false, message: lastMessage, partial: r.data.partial === true };
+            }
+
+            lastMessage = r.message || 'Submission failed';
+            setSubmitStatus(en ? 'Verifying the result with the server...' : 'กำลังตรวจสอบผลการบันทึกกับเซิร์ฟเวอร์...');
+            const pr = await resolvePendingRequest(requestId);
+            if (pr.state === 'committed') {
+                clearPendingSubmit();
+                return { success: true };
+            }
+            if (pr.state === 'cancelled') {
+                clearPendingSubmit();
+                if (attempt < 3) { await sleepMs(1000 * attempt); continue; }
+                return { success: false, message: lastMessage };
+            }
+            return { success: false, unknown: true, message: lastMessage };
+        }
+        return { success: false, message: lastMessage };
+    }
+
+    function showSubmitFailure(result) {
+        const en = currentLang === 'en';
+        if (result.recoveredOther) {
+            Swal.fire({
+                icon: 'warning',
+                title: en ? 'Previous submission was already saved' : 'รายการที่ส่งก่อนหน้านี้ถูกบันทึกสำเร็จแล้ว',
+                text: en ? 'An earlier submission was confirmed as saved, but the items on screen are different from it. Nothing new was saved. Please check Activity Log, remove any duplicated items, then confirm again.' : 'ระบบตรวจพบว่ารายการที่ส่งค้างไว้ก่อนหน้านี้บันทึกสำเร็จแล้ว แต่รายการบนหน้าจอไม่ตรงกับชุดนั้น จึงยังไม่ได้บันทึกอะไรเพิ่ม กรุณาตรวจสอบใน Activity Log ลบรายการที่ซ้ำออก แล้วกดยืนยันอีกครั้ง'
+            });
+            return;
+        }
+        if (result.unknown) {
+            Swal.fire({
+                icon: 'warning',
+                title: en ? 'Result not confirmed yet' : 'ยังยืนยันผลการบันทึกไม่ได้',
+                text: (en ? 'Cause: ' : 'สาเหตุ: ') + (result.message || '-') + (en ? ' The server could not be reached to confirm the result. Your items are still on this screen. When the connection is back, press confirm again - the system will check first and will not save twice.' : ' ระบบยังติดต่อเซิร์ฟเวอร์เพื่อยืนยันผลไม่ได้ รายการยังอยู่บนหน้าจอนี้ เมื่อสัญญาณกลับมาให้กดยืนยันอีกครั้ง ระบบจะตรวจสอบก่อนและจะไม่บันทึกซ้ำ')
+            });
+            return;
+        }
+        if (result.partial) {
+            Swal.fire({ icon: 'error', title: 'Error', text: result.message || 'Submission failed' });
+            return;
+        }
+        Swal.fire({
+            icon: 'error',
+            title: en ? 'Not saved' : 'บันทึกไม่สำเร็จ',
+            text: (en ? 'Cause: ' : 'สาเหตุ: ') + (result.message || 'Submission failed') + (en ? ' Nothing was saved. Your items are still here, you can confirm again.' : ' รายการนี้ยังไม่ถูกบันทึกเข้าระบบ ข้อมูลยังอยู่บนหน้าจอ สามารถกดยืนยันอีกครั้งได้')
+        });
+    }
+
+    async function resolvePendingOnLoad() {
+        const pend = getPendingSubmit();
+        if (!pend || !pend.requestId) return;
+        const pr = await resolvePendingRequest(pend.requestId, 2);
+        if (pr.state === 'unknown') return;
+        clearPendingSubmit();
+        if (pr.state !== 'committed') return;
+        const en = currentLang === 'en';
+        let cleared = false;
+        if (pend.kind === 'action' && pend.sig === itemsSignature(scannedItems) && scannedItems.length > 0) {
+            const oldItems = scannedItems;
+            scannedItems = []; renderScanItems(); setValue('actionDocRef', '');
+            setValue('actionInvoice', ''); setValue('actionRemark', '');
+            clearActionDraft(oldItems);
+            cleared = true;
+        } else if (pend.kind === 'count' && pend.sig === itemsSignature(countItems) && countItems.length > 0) {
+            countItems = []; renderCountItems(); setValue('countRemark', '');
+            clearCountDraft();
+            cleared = true;
+        }
+        Swal.fire({
+            icon: 'info',
+            title: en ? 'Previous submission was saved' : 'รายการที่ส่งก่อนหน้านี้บันทึกสำเร็จแล้ว',
+            text: cleared ? (en ? 'The draft was cleared so it will not be submitted twice.' : 'ระบบล้างรายการที่ค้างบนหน้าจอให้แล้ว เพื่อไม่ให้ส่งซ้ำ') : (en ? 'Please check Activity Log before submitting again.' : 'กรุณาตรวจสอบใน Activity Log ก่อนทำรายการซ้ำ')
+        });
+        fetchSystemData();
     }
 
     window.onload = () => {
@@ -828,7 +1253,7 @@
       }
       
       setLang('en');
-      fetchSystemData();
+      bootData();
       
       const today = new Date().toISOString().split('T')[0];
       setValue('actionDate', today);
@@ -867,21 +1292,30 @@
               main.style.width = 'calc(100% - 18rem)';
               overlay.style.display = 'none';
           } else {
-              main.style.marginLeft = '5rem'; 
-              main.style.width = 'calc(100% - 5rem)';
+              main.style.marginLeft = '0';
+              main.style.width = '100%';
               overlay.style.display = 'block';
               setTimeout(() => overlay.style.opacity = '1', 10);
           }
        } else {
-          sb.classList.remove('w-72', '-translate-x-full');
-          sb.classList.add('w-20', 'translate-x-0');
+          sb.classList.remove('w-72');
+          sb.classList.add('w-20');
           texts.forEach(el => { el.classList.add('hidden', 'w-0', 'opacity-0'); });
           icons.forEach(el => { el.classList.add('mx-auto'); });
-          
-          main.style.marginLeft = '5rem';
-          main.style.width = 'calc(100% - 5rem)';
+
+          if(isDesktop) {
+              sb.classList.remove('-translate-x-full');
+              sb.classList.add('translate-x-0');
+              main.style.marginLeft = '5rem';
+              main.style.width = 'calc(100% - 5rem)';
+          } else {
+              sb.classList.remove('translate-x-0');
+              sb.classList.add('-translate-x-full');
+              main.style.marginLeft = '0';
+              main.style.width = '100%';
+          }
           overlay.style.opacity = '0';
-          setTimeout(() => overlay.style.display = 'none', 300);
+          setTimeout(() => { if(!isSidebarOpen || window.innerWidth >= 768) overlay.style.display = 'none'; }, 300);
        }
     }
 
@@ -897,8 +1331,11 @@
 
     async function handleManualRefresh() {
        showLoading();
-       await fetchSystemData();
+       const res = await fetchSystemData(true);
        Swal.close();
+       if (res && res.ok === false) {
+          Swal.fire({icon:'error', title: currentLang==='en'?'Refresh failed':'รีเฟรชข้อมูลไม่สำเร็จ', text: (currentLang==='en'?'Cause: ':'สาเหตุ: ') + (res.message || '-')});
+       }
     }
 
     async function doSilentLogin(id, p) {
@@ -957,15 +1394,91 @@
       else { l.style.display = 'none'; r.style.display = 'block'; }
     }
 
-    async function fetchSystemData() { 
-       const data = await apiCall('getInitData', [], true);
-       if(data && typeof data === 'object') {
-          if(data.sys) globalData = data.sys;
-          else globalData = data;
-          populateDropdowns(); 
-          if(getEl('viewDashboard') && getEl('viewDashboard').classList.contains('active')) renderStockSilent();
-          if(getEl('viewHistory') && getEl('viewHistory').classList.contains('active')) renderHistorySilent();
+    let staticVer = '';
+    let liveVer = '';
+    let liveSeqCounter = 0;
+    let liveSeqApplied = 0;
+    let staticSeqCounter = 0;
+    let staticSeqApplied = 0;
+    let syncInFlight = false;
+
+    function applyStaticData(d) {
+       globalData.branches = d.branches || [];
+       globalData.inCharges = d.inCharges || [];
+       globalData.skus = d.skus || [];
+    }
+
+    function applyLiveData(d) {
+       globalData.stock = d.stock || [];
+       globalData.history = d.history || [];
+       globalData.pos = d.pos || [];
+       globalData.poReceives = d.poReceives || {};
+    }
+
+    function renderActiveDataViews() {
+       if(getEl('viewDashboard') && getEl('viewDashboard').classList.contains('active')) renderStockSilent();
+       if(getEl('viewHistory') && getEl('viewHistory').classList.contains('active')) renderHistorySilent();
+    }
+
+    async function fetchSyncPart(part, force, guard) {
+       const sSeq = ++staticSeqCounter;
+       const lSeq = ++liveSeqCounter;
+       const r = await apiRequest('getSyncData', [], { isGet: true, query: { part: part, sv: staticVer, lv: liveVer, force: force ? '1' : '' } });
+       const out = { ok: false, staticChanged: false, liveChanged: false, message: '' };
+       if (!r.ok || !r.data || typeof r.data !== 'object' || r.data.error) {
+          out.message = r.ok ? ((r.data && r.data.message) || 'Invalid data') : r.message;
+          return out;
        }
+       out.ok = true;
+       if (guard && !guard()) return out;
+       const d = r.data;
+       if (d.static && d.static.data && sSeq > staticSeqApplied) {
+          staticSeqApplied = sSeq;
+          applyStaticData(d.static.data);
+          staticVer = d.static.ver || '';
+          out.staticChanged = true;
+          idbSet('cache_static', { ver: staticVer, data: d.static.data });
+       }
+       if (d.live && d.live.data && lSeq > liveSeqApplied) {
+          liveSeqApplied = lSeq;
+          applyLiveData(d.live.data);
+          liveVer = d.live.ver || '';
+          out.liveChanged = true;
+          idbSet('cache_live', { ver: liveVer, data: d.live.data });
+       }
+       return out;
+    }
+
+    async function fetchSystemData(force) {
+       const results = await Promise.all([fetchSyncPart('static', force === true), fetchSyncPart('live', force !== false)]);
+       const anyOk = results[0].ok || results[1].ok;
+       if (anyOk) {
+          populateDropdowns(); 
+          renderActiveDataViews();
+       }
+       return { ok: results[0].ok && results[1].ok, message: results[0].message || results[1].message };
+    }
+
+    async function bootData() {
+       try {
+          const cached = await Promise.all([idbGet('cache_static'), idbGet('cache_live')]);
+          const cs = cached[0]; const cl = cached[1];
+          let used = false;
+          if (cs && cs.data && !staticVer) { applyStaticData(cs.data); staticVer = cs.ver || ''; used = true; }
+          if (cl && cl.data && !liveVer) { applyLiveData(cl.data); liveVer = cl.ver || ''; used = true; }
+          if (used) { populateDropdowns(true); renderActiveDataViews(); }
+       } catch (e) {}
+       await Promise.all([
+          fetchSyncPart('static', false).then(r => { if (r.staticChanged) populateDropdowns(true); }),
+          fetchSyncPart('live', false).then(r => { if (r.liveChanged) { populateDropdowns(true); renderActiveDataViews(); } })
+       ]);
+       draftSelectValues = null;
+    }
+
+    async function refreshLiveSilently() {
+       if (isSubmitting || syncInFlight) return;
+       const r = await fetchSyncPart('live', false, () => !isSubmitting);
+       if (r.liveChanged) renderActiveDataViews();
     }
 
     function filterInChargeDropdowns() {
@@ -1004,10 +1517,25 @@
        setHtml('countInCharge', getHtmlFor(countBranch));
     }
 
-    function populateDropdowns() {
+    function populateDropdowns(preserve) {
       if(!globalData) return;
       const branches = globalData.branches || [];
       const pos = globalData.pos || [];
+
+      const branchSelectIds = ['regBranch', 'actionToBranch', 'filterBranch', 'actionFromBranch', 'poReceiveBranch', 'stockBranchFilter', 'countBranch', 'historyBranchFilter', 'historyToBranchFilter'];
+      const inChargeSelectIds = ['poInCharge', 'actionInCharge', 'countInCharge'];
+      const kept = {};
+      if (preserve) {
+          branchSelectIds.concat(inChargeSelectIds, ['filterSupplier']).forEach(id => { const el = getEl(id); if (el) kept[id] = el.value; });
+      }
+      const restoreSelect = (id) => {
+          if (!preserve) return;
+          const el = getEl(id);
+          if (!el) return;
+          let want = kept[id];
+          if (!want && draftSelectValues && draftSelectValues[id]) want = draftSelectValues[id];
+          if (want && Array.from(el.options).some(o => o.value === want)) el.value = want;
+      };
 
       const allBranchesHtml = branches.map(b => `<option value="${b}">${b}</option>`).join('');
       const defaultOpt = `<option value="">${i18n[currentLang].selectBranch}</option>`;
@@ -1038,8 +1566,11 @@
       setHtml('countBranch', specificBranchHtml);
 
       const histBranchFilter = getEl('historyBranchFilter');
-      histBranchFilter.style.display = 'inline-block';
       histBranchFilter.innerHTML = specificBranchHtml;
+
+      const prevToFilter = getEl('historyToBranchFilter').value;
+      setHtml('historyToBranchFilter', '<option value="">To Branch: All</option>' + allBranchesHtml);
+      if (prevToFilter && branches.includes(prevToFilter)) setValue('historyToBranchFilter', prevToFilter);
 
       let shouldDisable = !isAdmin && userBranches.length === 1;
       
@@ -1059,10 +1590,15 @@
           setValue('historyBranchFilter', userBranches[0]);
       }
 
+      branchSelectIds.forEach(restoreSelect);
+
       filterInChargeDropdowns();
+
+      inChargeSelectIds.forEach(restoreSelect);
 
       const suppliers = [...new Set(pos.map(p => p.supplier).filter(Boolean))];
       setHtml('filterSupplier', '<option value="">All Suppliers</option>' + suppliers.map(s => `<option value="${s}">${s}</option>`).join(''));
+      restoreSelect('filterSupplier');
     }
 
     function showLoading() { Swal.fire({title: 'Processing...', background: '#fff', color: '#1b1b24', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); }
@@ -1159,9 +1695,10 @@
       populateDropdowns();
       loadActionDraft();
       loadCountDraft();
-      toggleActionFields(); 
+      toggleActionFields();
       startBackgroundSync();
       switchTab('viewInbound', document.querySelector('.desktop-sidebar .nav-item-btn'));
+      resolvePendingOnLoad();
     }
 
     function switchTab(tabId, el) {
@@ -1182,8 +1719,14 @@
       
       if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
       
-      if(tabId === 'viewDashboard') loadStock(true);
-      if(tabId === 'viewHistory') loadHistory(true);
+      if(tabId === 'viewDashboard') {
+          if (globalData.stock && globalData.stock.length > 0) { renderStockSilent(); refreshLiveSilently(); }
+          else loadStock(true);
+      }
+      if(tabId === 'viewHistory') {
+          if (globalData.history && globalData.history.length > 0) { renderHistorySilent(); refreshLiveSilently(); }
+          else loadHistory(true);
+      }
       updateTopBarTitle();
     }
 
@@ -1279,19 +1822,21 @@
     function renderPOTable() {
        let html = currentFilterItems.map((item, idx) => `
         <tr class="hover:bg-surface-container-high transition-colors">
-          <td class="px-6 py-4 border-b border-outline-variant/30"><span class="inline-flex px-3 py-1 bg-surface-container-high border border-outline-variant text-on-surface rounded-lg text-xs font-bold">${item.po}</span></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30"><div class="text-primary font-bold text-sm">${item.sku}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${item.name}">${item.name}</div></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm font-bold">${item.remaining}</span></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 w-32"><input type="number" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-sm po-rcv-qty pointer-events-auto" data-idx="${idx}" value="${item.inputQty}" placeholder="0" min="0" step="0.01" oninput="currentFilterItems[${idx}].inputQty = this.value;"></td>
-          <td class="px-4 py-4 border-b border-outline-variant/30 text-center flex justify-center gap-1">
-            <button class="p-2 rounded-full transition-colors flex items-center justify-center ${item.photoBase64 ? 'text-success bg-success/10' : 'text-primary bg-primary/10 hover:bg-primary/20'} pointer-events-auto" onclick="openPOItemCamera(${idx})" title="Camera">
-               <span class="material-symbols-outlined text-sm">photo_camera</span>
-            </button>
-            <button class="p-2 rounded-full transition-colors flex items-center justify-center text-secondary bg-surface-container-high hover:bg-surface-container-highest pointer-events-auto" onclick="openPOItemGallery(${idx})" title="Gallery">
-               <span class="material-symbols-outlined text-sm">image</span>
-            </button>
+          <td class="rt-o1 px-3 lg:px-4 py-4 border-b border-outline-variant/30"><span class="inline-flex px-3 py-1 bg-surface-container-high border border-outline-variant text-on-surface rounded-lg text-xs font-bold whitespace-nowrap">${escHtml(item.po)}</span></td>
+          <td class="rt-o3 rt-full px-3 lg:px-4 py-4 border-b border-outline-variant/30"><div class="text-primary font-bold text-sm">${escHtml(item.sku)}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${escHtml(item.name)}">${escHtml(item.name)}</div></td>
+          <td class="rt-o4 px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center" data-label="${currentLang==='en'?'Remaining':'คงเหลือ'}"><span class="inline-flex px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm font-bold">${item.remaining}</span></td>
+          <td class="rt-o5 rt-grow px-3 lg:px-4 py-4 border-b border-outline-variant/30 w-32" data-label="${i18n[currentLang].thReceive}"><input type="number" inputmode="decimal" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-sm po-rcv-qty pointer-events-auto" data-idx="${idx}" value="${item.inputQty}" placeholder="0" min="0" step="0.01" oninput="currentFilterItems[${idx}].inputQty = this.value;"></td>
+          <td class="rt-o6 px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center">
+            <div class="flex justify-center gap-1">
+              <button class="p-2.5 md:p-2 rounded-full transition-colors flex items-center justify-center ${item.photoBase64 ? 'text-success bg-success/10' : 'text-primary bg-primary/10 hover:bg-primary/20'} pointer-events-auto" onclick="openPOItemCamera(${idx})" title="Camera">
+                 <span class="material-symbols-outlined text-base md:text-sm">photo_camera</span>
+              </button>
+              <button class="p-2.5 md:p-2 rounded-full transition-colors flex items-center justify-center text-secondary bg-surface-container-high hover:bg-surface-container-highest pointer-events-auto" onclick="openPOItemGallery(${idx})" title="Gallery">
+                 <span class="material-symbols-outlined text-base md:text-sm">image</span>
+              </button>
+            </div>
           </td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 text-on-surface-variant text-sm">${item.branch}</td>
+          <td class="rt-o2 rt-right px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-on-surface-variant text-sm">${escHtml(item.branch)}</td>
         </tr>
       `).join('');
       setHtml('poItemsTable', html);
@@ -1319,9 +1864,17 @@
         const file = event.target.files[0];
         if (!file || currentPOPhotoIdx === -1) return;
         Swal.fire({title: currentLang==='en'?'Processing...':'กำลังเตรียมรูปภาพ...', background: '#fff', color: '#1b1b24', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-        currentFilterItems[currentPOPhotoIdx].photoBase64 = await compressImage(file, 800, 800, 0.7);
-        Swal.close();
-        renderPOTable();
+        try {
+            const photo = await compressImage(file, 800, 800, 0.7);
+            if (currentFilterItems[currentPOPhotoIdx]) {
+                currentFilterItems[currentPOPhotoIdx].photoBase64 = photo;
+                currentFilterItems[currentPOPhotoIdx].photoUrl = null;
+            }
+            Swal.close();
+            renderPOTable();
+        } catch (err) {
+            Swal.fire({icon:'error', title: currentLang==='en'?'Photo could not be prepared':'เตรียมรูปภาพไม่สำเร็จ', text: (currentLang==='en'?'Cause: ':'สาเหตุ: ') + ((err && err.message) || 'Unknown') + (currentLang==='en'?' Please take or choose the photo again.':' กรุณาถ่ายหรือเลือกรูปใหม่อีกครั้ง')});
+        }
         event.target.value = '';
     }
 
@@ -1350,7 +1903,7 @@
         let val = parseFloat(inp.value) || 0;
         if(val > 0) {
           let itm = currentFilterItems[inp.getAttribute('data-idx')];
-          payload.push({ sku: itm.sku, name: itm.name, qty: val, po: itm.po, remaining: itm.remaining, photoBase64: itm.photoBase64 });
+          payload.push({ sku: itm.sku, name: itm.name, qty: val, po: itm.po, remaining: itm.remaining, photoBase64: itm.photoBase64, photoUrl: itm.photoUrl || null, _src: itm });
         }
       });
       if(payload.length === 0) return Swal.fire({icon:'warning', title: currentLang==='en'?'No quantity entered':'ไม่ได้ระบุจำนวนรับ'});
@@ -1362,20 +1915,27 @@
       let hasOver = payload.some(x => x.qty > x.remaining);
 
       let proceed = async () => {
+          if (isSubmitting) return;
           isSubmitting = true;
-          showLoading();
+          showSubmitProgress(currentLang==='en'?'Preparing...':'กำลังเตรียมข้อมูล...');
           lastManualSyncTime = Date.now();
-          
-          const res = await apiCall('processBulkTransaction', ['Inbound', '', invoiceNo, remark, payload, receiveBranch, '', currentUser.id, txDate, inCharge, null]);
-          if(res && res.success) {
-            Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
-            setDisplay('poResultContainer', 'none'); 
+
+          try {
+            const res = await safeSubmitTransaction({ kind: 'po', type: 'Inbound', ref: '', invoice: invoiceNo, remark: remark, items: payload, tb: receiveBranch, fb: '', txDate: txDate, inCharge: inCharge });
+            if(res && res.success) {
+              Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
+              setDisplay('poResultContainer', 'none');
+              lastManualSyncTime = Date.now();
+              fetchSystemData();
+            } else {
+              showSubmitFailure(res || {});
+            }
+          } catch (err) {
+            showSubmitFailure({ unknown: !!getPendingSubmit(), message: (err && err.message) || 'Unexpected error' });
+          } finally {
             lastManualSyncTime = Date.now();
-            fetchSystemData();
-          } else {
-             Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
+            isSubmitting = false;
           }
-          isSubmitting = false;
       };
 
       if (hasOver) {
@@ -1502,8 +2062,15 @@
        const file = event.target.files[0];
        if (!file) { return; }
 
+       if (!pendingItem) { event.target.value = ''; return; }
        Swal.fire({title: currentLang==='en'?'Processing...':'กำลังเตรียมรูปภาพ...', background: '#fff', color: '#1b1b24', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-       pendingItem.photoBase64 = await compressImage(file, 800, 800, 0.7);
+       try {
+           pendingItem.photoBase64 = await compressImage(file, 800, 800, 0.7);
+       } catch (err) {
+           event.target.value = '';
+           Swal.fire({icon:'error', title: currentLang==='en'?'Photo could not be prepared':'เตรียมรูปภาพไม่สำเร็จ', text: (currentLang==='en'?'Cause: ':'สาเหตุ: ') + ((err && err.message) || 'Unknown') + (currentLang==='en'?' Please take or choose the photo again.':' กรุณาถ่ายหรือเลือกรูปใหม่อีกครั้ง')});
+           return;
+       }
        Swal.close();
 
        setDisplay('pendingPhotoArea', 'none');
@@ -1532,10 +2099,12 @@
          const currentStock = stockItem ? parseFloat(stockItem.qty) : 0;
          if(currentStock <= 0 || qty > currentStock) return Swal.fire({icon:'error', title: currentLang==='en'?'Insufficient Stock':'สต็อกไม่เพียงพอ', text: `${pendingItem.sku} มีคงเหลือแค่ ${currentStock}`});
       }
-      scannedItems.push({...pendingItem, qty: qty}); 
+      const newItem = {...pendingItem, qty: qty, uid: newItemUid()};
+      scannedItems.push(newItem);
+      storeItemPhoto(newItem);
       renderScanItems();
       saveActionDraft();
-      
+            
       setDisplay('pendingScanArea', 'none'); 
       setDisplay('scanInputContainer', 'block');
       pendingItem = null;
@@ -1554,11 +2123,11 @@
     function renderScanItems() {
       const html = scannedItems.map((item, idx) => `
         <tr class="hover:bg-surface-container-high transition-colors">
-          <td class="px-6 py-4 border-b border-outline-variant/30"><div class="font-bold text-primary text-sm">${item.sku}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${item.name}">${item.name}</div></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-surface-container border border-outline-variant text-on-surface rounded-lg text-xs font-bold">${item.uom}</span></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 w-32"><input type="number" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md font-bold text-sm pointer-events-auto" value="${item.qty}" min="0.01" step="0.01" oninput="updateScanQty(${idx}, this.value)"></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 text-center"><span class="material-symbols-outlined text-success">photo_camera</span></td>
-          <td class="px-4 py-4 border-b border-outline-variant/30 text-center"><button class="text-error hover:bg-error-container p-2 rounded-full transition-colors flex items-center justify-center pointer-events-auto" onclick="removeScanItem(${idx})"><span class="material-symbols-outlined text-sm">delete</span></button></td>
+          <td class="rt-full px-3 lg:px-4 py-4 border-b border-outline-variant/30"><div class="font-bold text-primary text-sm">${escHtml(item.sku)}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${escHtml(item.name)}">${escHtml(item.name)}</div></td>
+          <td class="px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-surface-container border border-outline-variant text-on-surface rounded-lg text-xs font-bold">${escHtml(item.uom)}</span></td>
+          <td class="rt-grow px-3 lg:px-4 py-4 border-b border-outline-variant/30 w-32"><input type="number" inputmode="decimal" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md font-bold text-sm pointer-events-auto" value="${item.qty}" min="0.01" step="0.01" oninput="updateScanQty(${idx}, this.value)"></td>
+          <td class="px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center"><span class="material-symbols-outlined ${item.photoBase64 || item.photoUrl ? 'text-success' : 'text-error'}">photo_camera</span></td>
+          <td class="px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center"><button class="text-error hover:bg-error-container p-2 rounded-full transition-colors flex items-center justify-center pointer-events-auto" onclick="removeScanItem(${idx})"><span class="material-symbols-outlined text-sm">delete</span></button></td>
         </tr>
       `).join('');
       setHtml('scanItemsList', html);
@@ -1570,9 +2139,10 @@
        saveActionDraft();
     }
     
-    function removeScanItem(idx) { 
-       scannedItems.splice(idx, 1); 
-       renderScanItems(); 
+    function removeScanItem(idx) {
+       const removed = scannedItems.splice(idx, 1);
+       if (removed[0] && removed[0].uid) idbDel('photo_' + removed[0].uid);
+       renderScanItems();  
        saveActionDraft();
     }
 
@@ -1595,22 +2165,35 @@
       if(isDeduction && !fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Origin Branch':'กรุณาระบุสาขาต้นทาง'});
       if(isAddition && !tb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Destination Branch':'กรุณาระบุสาขาปลายทาง'});
 
+      const noPhotoItem = scannedItems.find(it => !it.photoBase64 && !it.photoUrl);
+      if(noPhotoItem) return Swal.fire({icon:'warning', title: currentLang==='en'?'Photo Missing':'ไม่พบรูปของสินค้า', text: currentLang==='en'?`${noPhotoItem.sku} has no photo. Please remove it and scan it again.`:`${noPhotoItem.sku} ไม่มีรูปแนบ กรุณาลบรายการนี้แล้วสแกนใหม่อีกครั้ง`});
+      const badQtyItem = scannedItems.find(it => !(parseFloat(it.qty) > 0));
+      if(badQtyItem) return Swal.fire({icon:'warning', title: currentLang==='en'?'Invalid Quantity':'จำนวนไม่ถูกต้อง', text: currentLang==='en'?`Please enter a quantity for ${badQtyItem.sku}.`:`กรุณาระบุจำนวนของ ${badQtyItem.sku}`});
+
+      if (isSubmitting) return;
       isSubmitting = true;
-      showLoading();
+      showSubmitProgress(currentLang==='en'?'Preparing...':'กำลังเตรียมข้อมูล...');
       lastManualSyncTime = Date.now();
-      
-      const res = await apiCall('processBulkTransaction', [type, ref, invoice, remark, scannedItems, tb, fb, currentUser.id, txDate, inCharge, null]);
-      if(res && res.success) {
-        Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
-        scannedItems = []; renderScanItems(); setValue('actionDocRef', '');
-        setValue('actionInvoice', ''); setValue('actionRemark', '');
-        clearActionDraft();
+
+      try {
+        const res = await safeSubmitTransaction({ kind: 'action', type: type, ref: ref, invoice: invoice, remark: remark, items: scannedItems, tb: tb, fb: fb, txDate: txDate, inCharge: inCharge, onPhotosUploaded: saveActionDraft });
+        if(res && res.success) {
+          Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
+          const sentItems = scannedItems;
+          scannedItems = []; renderScanItems(); setValue('actionDocRef', '');
+          setValue('actionInvoice', ''); setValue('actionRemark', '');
+          clearActionDraft(sentItems);
+          lastManualSyncTime = Date.now();
+          fetchSystemData();
+        } else {
+          showSubmitFailure(res || {});
+        }
+      } catch (err) {
+        showSubmitFailure({ unknown: !!getPendingSubmit(), message: (err && err.message) || 'Unexpected error' });
+      } finally {
         lastManualSyncTime = Date.now();
-        fetchSystemData();
-      } else {
-        Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
+        isSubmitting = false;
       }
-      isSubmitting = false;
     }
 
     /* ================= STOCK COUNT FUNCTIONS ================= */
@@ -1702,10 +2285,10 @@
     function renderCountItems() {
       const html = countItems.map((item, idx) => `
         <tr class="hover:bg-surface-container-high transition-colors">
-          <td class="px-6 py-4 border-b border-outline-variant/30"><div class="font-bold text-primary text-sm">${item.sku}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${item.name}">${item.name}</div></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-surface-container border border-outline-variant text-on-surface rounded-lg text-xs font-bold">${item.uom}</span></td>
-          <td class="px-6 py-4 border-b border-outline-variant/30 w-32"><input type="number" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md font-bold text-sm pointer-events-auto" value="${item.qty}" min="0" step="0.01" oninput="updateCountQty(${idx}, this.value)"></td>
-          <td class="px-4 py-4 border-b border-outline-variant/30 text-center"><button class="text-error hover:bg-error-container p-2 rounded-full transition-colors flex items-center justify-center pointer-events-auto" onclick="removeCountItem(${idx})"><span class="material-symbols-outlined text-sm">delete</span></button></td>
+          <td class="rt-full px-3 lg:px-4 py-4 border-b border-outline-variant/30"><div class="font-bold text-primary text-sm">${escHtml(item.sku)}</div><div class="text-on-surface-variant text-xs mt-1 truncate max-w-[200px]" title="${escHtml(item.name)}">${escHtml(item.name)}</div></td>
+          <td class="px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center"><span class="inline-flex px-3 py-1 bg-surface-container border border-outline-variant text-on-surface rounded-lg text-xs font-bold">${escHtml(item.uom)}</span></td>
+          <td class="rt-grow px-3 lg:px-4 py-4 border-b border-outline-variant/30 w-32"><input type="number" inputmode="decimal" class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md font-bold text-sm pointer-events-auto" value="${item.qty}" min="0" step="0.01" oninput="updateCountQty(${idx}, this.value)"></td>
+          <td class="px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-center"><button class="text-error hover:bg-error-container p-2 rounded-full transition-colors flex items-center justify-center pointer-events-auto" onclick="removeCountItem(${idx})"><span class="material-symbols-outlined text-sm">delete</span></button></td>
         </tr>
       `).join('');
       setHtml('countItemsList', html);
@@ -1735,21 +2318,28 @@
       if(!fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Branch':'กรุณาระบุสาขา (Branch)'});
       if(!inCharge) return Swal.fire({icon:'warning', title: currentLang==='en'?'In Charge Required':'กรุณาระบุผู้รับผิดชอบ'});
 
+      if (isSubmitting) return;
       isSubmitting = true;
-      showLoading();
+      showSubmitProgress(currentLang==='en'?'Preparing...':'กำลังเตรียมข้อมูล...');
       lastManualSyncTime = Date.now();
-      
-      const res = await apiCall('processBulkTransaction', ['Stock Count', 'Stock Count', '-', remark, countItems, '', fb, currentUser.id, txDate, inCharge, null]);
-      if(res && res.success) {
-        Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
-        countItems = []; renderCountItems(); setValue('countRemark', '');
-        clearCountDraft();
+
+      try {
+        const res = await safeSubmitTransaction({ kind: 'count', type: 'Stock Count', ref: 'Stock Count', invoice: '-', remark: remark, items: countItems, tb: '', fb: fb, txDate: txDate, inCharge: inCharge });
+        if(res && res.success) {
+          Swal.fire({icon:'success', title:'Success', showConfirmButton: false, timer: 1500});
+          countItems = []; renderCountItems(); setValue('countRemark', '');
+          clearCountDraft();
+          lastManualSyncTime = Date.now();
+          fetchSystemData();
+        } else {
+          showSubmitFailure(res || {});
+        }
+      } catch (err) {
+        showSubmitFailure({ unknown: !!getPendingSubmit(), message: (err && err.message) || 'Unexpected error' });
+      } finally {
         lastManualSyncTime = Date.now();
-        fetchSystemData();
-      } else {
-        Swal.fire({icon:'error', title:'Error', text: res ? res.message : 'Submission failed'});
+        isSubmitting = false;
       }
-      isSubmitting = false;
     }
 
     function loadStock(isManual = false) {
@@ -1786,12 +2376,12 @@
 
        const html = filtered.map(r => `
           <tr class="hover:bg-surface-container-high transition-colors">
-             <td class="px-6 py-4 border-b border-outline-variant/30">
-               <div class="font-bold text-primary text-sm">${r.sku}</div>
-               <div class="text-on-surface-variant text-xs mt-1 truncate max-w-[250px]" title="${r.name}">${r.name}</div>
+             <td class="rt-o1 rt-grow px-3 lg:px-4 py-4 border-b border-outline-variant/30">
+               <div class="font-bold text-primary text-sm">${escHtml(r.sku)}</div>
+               <div class="text-on-surface-variant text-xs mt-1 truncate max-w-[250px]" title="${escHtml(r.name)}">${escHtml(r.name)}</div>
              </td>
-             <td class="px-6 py-4 border-b border-outline-variant/30 text-on-surface-variant text-sm">${r.branch}</td>
-             <td class="px-6 py-4 border-b border-outline-variant/30 text-right">
+             <td class="rt-o3 rt-full px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-on-surface-variant text-sm">${escHtml(r.branch)}</td>
+             <td class="rt-o2 px-3 lg:px-4 py-4 border-b border-outline-variant/30 text-right">
                <span class="inline-flex px-3 py-1 bg-primary-container text-white rounded-lg text-sm font-bold shadow-sm">${r.qty}</span>
              </td>
           </tr>
@@ -1891,17 +2481,87 @@
         });
     }
 
-    async function editFullTx(txId, oldSku, rawTime, currentType, currentQty, currentName) {
-        let d = new Date(rawTime);
+    function toggleTxSelectionIdx(idx, el) {
+       const r = currentHistoryView[idx];
+       if (!r) return;
+       toggleTxSelection(r.txId, r.sku, el);
+    }
+
+    function matchSkuList(val, limit) {
+        const tokens = String(val || '').toLowerCase().split(/\s+/).filter(Boolean);
+        const flat = cleanMatch(val);
+        const out = [];
+        if (tokens.length === 0) return out;
+        const skus = globalData.skus || [];
+        for (let i = 0; i < skus.length && out.length < limit; i++) {
+            const s = skus[i];
+            const hay = (String(s.sku || '') + ' ' + String(s.name || '') + ' ' + String(s.barcode || '')).toLowerCase();
+            if (tokens.every(t => hay.includes(t)) || hay.replace(/\s+/g, '').includes(flat)) out.push(s);
+        }
+        return out;
+    }
+
+    function renderEditSkuBox(val) {
+        const box = document.getElementById('editSkuBox');
+        if (!box) return;
+        const matches = matchSkuList(val, 30);
+        if (matches.length === 0) { box.innerHTML = ''; box.style.display = 'none'; return; }
+        box.innerHTML = matches.map(m => `<div class="edit-ac-item"><span class="font-bold text-primary">${escHtml(m.sku)}</span><br><span class="text-on-surface-variant">${escHtml(m.name)}</span></div>`).join('');
+        Array.from(box.children).forEach((el, i) => {
+            el.onclick = () => {
+                document.getElementById('swal-sku').value = matches[i].sku;
+                document.getElementById('swal-name').value = matches[i].name;
+                document.getElementById('swal-name-view').innerText = matches[i].name;
+                box.innerHTML = '';
+                box.style.display = 'none';
+            };
+        });
+        box.style.display = 'block';
+    }
+
+    function onEditSkuInput(val) {
+        const exact = (globalData.skus || []).find(s => cleanMatch(s.sku) === cleanMatch(val));
+        if (exact) {
+            document.getElementById('swal-name').value = exact.name;
+            document.getElementById('swal-name-view').innerText = exact.name;
+        } else {
+            document.getElementById('swal-name-view').innerText = '';
+        }
+        renderEditSkuBox(val);
+    }
+
+    function renderEditToBranchBox(val, showAll) {
+        const box = document.getElementById('editToBranchBox');
+        if (!box) return;
+        const q = cleanMatch(val);
+        const branches = (globalData.branches || []).filter(b => showAll || !q || cleanMatch(b).includes(q));
+        if (branches.length === 0) { box.innerHTML = ''; box.style.display = 'none'; return; }
+        box.innerHTML = branches.map(b => `<div class="edit-ac-item font-bold">${escHtml(b)}</div>`).join('');
+        Array.from(box.children).forEach((el, i) => {
+            el.onclick = () => {
+                document.getElementById('swal-to-branch').value = branches[i];
+                box.innerHTML = '';
+                box.style.display = 'none';
+            };
+        });
+        box.style.display = 'block';
+    }
+
+    async function editFullTx(idx) {
+        const r = currentHistoryView[idx];
+        if (!r) return;
+        const txId = r.txId;
+        const oldSku = r.sku;
+        const currentType = r.type;
+        const cType = cleanMatch(currentType);
+
+        let d = new Date(r.time);
         let m = String(d.getMonth() + 1).padStart(2, '0');
         let day = String(d.getDate()).padStart(2, '0');
         let dateVal = !isNaN(d.getTime()) ? `${d.getFullYear()}-${m}-${day}` : '';
 
         let typeOptions = ['Inbound', 'Outbound', 'Transfer', 'Entertain', 'RD', 'Return to Stock', 'FOC Inbound', 'FOC Outbound', 'Stock Count'];
-        let typeHtml = typeOptions.map(t => `<option value="${t}" ${cleanMatch(t) === cleanMatch(currentType) ? 'selected' : ''}>${t}</option>`).join('');
-        
-        let skuHtml = (globalData.skus || []).map(s => `<option value="${s.sku}">${s.sku} - ${s.name}</option>`).join('');
-        let datalistHtml = `<datalist id="edit-sku-list">${skuHtml}</datalist>`;
+        let typeHtml = typeOptions.map(t => `<option value="${t}" ${cleanMatch(t) === cType ? 'selected' : ''}>${t}</option>`).join('');
 
         const formHtml = `
             <div class="flex flex-col gap-3 text-left">
@@ -1914,18 +2574,26 @@
                     <select id="swal-type" class="w-full rounded-xl border border-outline-variant p-2">${typeHtml}</select>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-on-surface-variant">SKU / Item Name</label>
-                    <input type="text" id="swal-sku" list="edit-sku-list" class="w-full rounded-xl border border-outline-variant p-2" value="${oldSku}" autocomplete="off" oninput="
-                        let selectedSku = this.value;
-                        let skuData = globalData.skus.find(s => s.sku === selectedSku);
-                        if(skuData) document.getElementById('swal-name').value = skuData.name;
-                    ">
-                    <input type="hidden" id="swal-name" value="${currentName}">
-                    ${datalistHtml}
+                    <label class="text-xs font-bold text-on-surface-variant">${currentLang === 'en' ? 'SKU / Item Name (type to search)' : 'รหัส / ชื่อสินค้า (พิมพ์เพื่อค้นหา)'}</label>
+                    <input type="text" id="swal-sku" class="w-full rounded-xl border border-outline-variant p-2" value="${escHtml(oldSku)}" autocomplete="off" placeholder="${currentLang === 'en' ? 'Type SKU or product name...' : 'พิมพ์รหัสหรือชื่อสินค้า...'}" oninput="onEditSkuInput(this.value)">
+                    <input type="hidden" id="swal-name" value="${escHtml(r.name)}">
+                    <div id="swal-name-view" class="text-xs text-on-surface-variant mt-1">${escHtml(r.name)}</div>
+                    <div id="editSkuBox" style="display:none;"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-on-surface-variant">From Branch</label>
+                        <input type="text" id="swal-from-branch" class="w-full rounded-xl border border-outline-variant p-2" value="${escHtml(r.fromBranch || '-')}" disabled>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-on-surface-variant">${currentLang === 'en' ? 'To Branch (type to filter)' : 'To Branch (พิมพ์เพื่อกรองสาขา)'}</label>
+                        <input type="text" id="swal-to-branch" class="w-full rounded-xl border border-outline-variant p-2" value="${escHtml(r.toBranch || '')}" autocomplete="off" placeholder="${currentLang === 'en' ? 'Filter branch...' : 'พิมพ์ชื่อสาขา...'}" oninput="renderEditToBranchBox(this.value, false)" onfocus="renderEditToBranchBox(this.value, true)">
+                        <div id="editToBranchBox" style="display:none;"></div>
+                    </div>
                 </div>
                 <div>
                     <label class="text-xs font-bold text-on-surface-variant">Quantity</label>
-                    <input type="number" id="swal-qty" class="w-full rounded-xl border border-outline-variant p-2" value="${currentQty}" min="0.01" step="0.01">
+                    <input type="number" inputmode="decimal" id="swal-qty" class="w-full rounded-xl border border-outline-variant p-2" value="${r.qty}" min="0" step="0.01">
                 </div>
             </div>
         `;
@@ -1937,12 +2605,30 @@
             confirmButtonText: 'Save',
             confirmButtonColor: '#3525cd',
             preConfirm: () => {
+                const newType = document.getElementById('swal-type').value;
+                const newSkuRaw = document.getElementById('swal-sku').value.trim();
+                const newQty = parseFloat(document.getElementById('swal-qty').value);
+                const toRaw = document.getElementById('swal-to-branch').value.trim();
+                const dateNew = document.getElementById('swal-date').value;
+                const skuData = (globalData.skus || []).find(s => cleanMatch(s.sku) === cleanMatch(newSkuRaw));
+                const isSameSku = cleanMatch(newSkuRaw) === cleanMatch(oldSku);
+                const toMatch = (globalData.branches || []).find(b => cleanMatch(b) === cleanMatch(toRaw));
+                const sameTo = cleanMatch(toRaw) === cleanMatch(r.toBranch);
+                const needsTo = ['Inbound', 'Return to Stock', 'FOC Inbound', 'Transfer'].includes(newType);
+
+                if (!dateNew) { Swal.showValidationMessage(currentLang === 'en' ? 'Please select a date' : 'กรุณาระบุวันที่'); return false; }
+                if (!newSkuRaw || (!skuData && !isSameSku)) { Swal.showValidationMessage(currentLang === 'en' ? 'Please select a product from the list' : 'กรุณาเลือกสินค้าจากรายการที่แสดง'); return false; }
+                if (isNaN(newQty) || newQty < 0 || (newQty === 0 && newType !== 'Stock Count')) { Swal.showValidationMessage(currentLang === 'en' ? 'Please enter a valid quantity' : 'กรุณาระบุจำนวนให้ถูกต้อง'); return false; }
+                if (toRaw && !toMatch && !sameTo) { Swal.showValidationMessage(currentLang === 'en' ? 'Please select To Branch from the list' : 'กรุณาเลือก To Branch จากรายการสาขา'); return false; }
+                if (needsTo && !toRaw) { Swal.showValidationMessage(currentLang === 'en' ? 'To Branch is required for this status' : 'สถานะนี้ต้องระบุ To Branch'); return false; }
+
                 return {
-                    date: document.getElementById('swal-date').value,
-                    type: document.getElementById('swal-type').value,
-                    sku: document.getElementById('swal-sku').value,
-                    name: document.getElementById('swal-name').value,
-                    qty: parseFloat(document.getElementById('swal-qty').value)
+                    date: dateNew,
+                    type: newType,
+                    sku: skuData ? skuData.sku : oldSku,
+                    name: skuData ? skuData.name : document.getElementById('swal-name').value,
+                    qty: newQty,
+                    toBranch: sameTo ? (r.toBranch || '') : (toMatch || '')
                 };
             }
         }).then(async (result) => {
@@ -1964,17 +2650,31 @@
         });
     }
 
+    let historyRenderTimer = null;
+    let currentHistoryView = [];
+
+    function renderHistoryDebounced() {
+       if (historyRenderTimer) clearTimeout(historyRenderTimer);
+       historyRenderTimer = setTimeout(renderHistorySilent, 200);
+    }
+
     function renderHistorySilent() {
        const df = getEl('historyDateFilter');
        const tf = getEl('historyTypeFilter');
        const bf = getEl('historyBranchFilter');
+       const tbf = getEl('historyToBranchFilter');
+       const sf = getEl('historySearch');
        if(!df || !tf) return;
-       
+
        const dateFilter = df.value;
        const typeFilter = tf.value;
        let branchFilter = bf ? bf.value : '';
+       let toBranchFilter = tbf ? tbf.value : '';
+       let searchRaw = sf ? sf.value : '';
+       let searchTokens = String(searchRaw).toLowerCase().split(/\s+/).filter(Boolean);
+       let searchFlat = cleanMatch(searchRaw);
        let userBranches = (currentUser && currentUser.branches) ? currentUser.branches : [];
-       
+
        let filtered = globalData.history || [];
        let isAdmin = isUserAdmin();
        let isManager = isUserManager();
@@ -1990,7 +2690,11 @@
                filtered = filtered.filter(r => userBranches.includes(r.fromBranch) || userBranches.includes(r.toBranch));
            }
        }
-       
+
+       if (toBranchFilter) {
+          filtered = filtered.filter(r => r.toBranch === toBranchFilter);
+       }
+
        if(dateFilter) {
           filtered = filtered.filter(r => {
              try {
@@ -2016,28 +2720,43 @@
           filtered = filtered.filter(r => cleanMatch(r.type) === cleanType);
        }
 
-       if (!dateFilter && typeFilter === 'All' && (!branchFilter || branchFilter === 'ALL')) {
+       if (searchTokens.length > 0) {
+          filtered = filtered.filter(r => {
+             let hay = (String(r.sku || '') + ' ' + String(r.name || '')).toLowerCase();
+             return searchTokens.every(t => hay.includes(t)) || hay.replace(/\s+/g, '').includes(searchFlat);
+          });
+       }
+
+       if (!dateFilter && typeFilter === 'All' && (!branchFilter || branchFilter === 'ALL') && !toBranchFilter && searchTokens.length === 0) {
           filtered = filtered.slice(0, 100);
        }
 
-       const html = filtered.map(r => {
+       currentHistoryView = filtered;
+
+       const html = filtered.map((r, idx) => {
           let cType = cleanMatch(r.type);
           let isAdd = ['inbound', 'returntostock', 'focinbound'].includes(cType);
           let isSub = ['outbound', 'entertain', 'rd', 'focoutbound'].includes(cType);
           let isCount = cType === 'stockcount';
           let isTransfer = cType === 'transfer';
-          
+
           let typeColorClass = isAdd ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : (isSub ? 'text-rose-700 bg-rose-50 border-rose-200' : (isCount ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-primary bg-primary/10 border-primary/20'));
           let qtyColorClass = isAdd ? 'text-emerald-600' : (isSub ? 'text-rose-600' : (isCount ? 'text-purple-600' : 'text-primary'));
           let qtySign = isAdd ? '+' : (isSub ? '-' : (isCount ? '=' : ''));
           let icon = isAdd ? 'arrow_downward' : (isSub ? 'arrow_upward' : (isCount ? 'fact_check' : 'sync_alt'));
-          
+
           let photoBadge = '';
           if (r.photo && !String(r.photo).includes('Error')) {
-             photoBadge = `<a href="${r.photo}" target="_blank" class="inline-flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded-md text-[10px] font-bold text-primary hover:bg-primary/20 transition-colors pointer-events-auto"><span class="material-symbols-outlined text-[12px]">image</span> Photo</a>`;
+             photoBadge = `<a href="${escHtml(r.photo)}" target="_blank" class="inline-flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded-md text-[10px] font-bold text-primary hover:bg-primary/20 transition-colors pointer-events-auto"><span class="material-symbols-outlined text-[12px]">image</span> Photo</a>`;
           } else if (r.photo && String(r.photo).includes('Error')) {
-             photoBadge = `<span class="inline-flex items-center gap-1 bg-error-container text-on-error-container px-2 py-1 rounded-md text-[10px] font-bold" title="${r.photo}"><span class="material-symbols-outlined text-[12px]">error</span> Upload Failed</span>`;
+             photoBadge = `<span class="inline-flex items-center gap-1 bg-error-container text-on-error-container px-2 py-1 rounded-md text-[10px] font-bold" title="${escHtml(r.photo)}"><span class="material-symbols-outlined text-[12px]">error</span> Upload Failed</span>`;
           }
+
+          let routeText = '';
+          if (r.fromBranch && r.toBranch) routeText = `${escHtml(r.fromBranch)} &rarr; ${escHtml(r.toBranch)}`;
+          else if (r.toBranch) routeText = `&rarr; ${escHtml(r.toBranch)}`;
+          else if (r.fromBranch) routeText = escHtml(r.fromBranch);
+          let routeBadge = routeText ? `<span class="flex items-center gap-1 font-semibold text-on-surface-variant">${routeText}</span>` : '';
 
           let canDelete = false;
           if (isAdmin) {
@@ -2047,31 +2766,32 @@
           }
 
           let isChecked = selectedTxs.has(JSON.stringify({txId: r.txId, sku: r.sku})) ? 'checked' : '';
-          let checkbox = canDelete ? `<input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer pointer-events-auto shrink-0" ${isChecked} onchange="toggleTxSelection('${r.txId}', '${r.sku}', this)">` : '';
-          
-          let editBtn = canDelete ? `<button class="text-outline hover:text-primary transition-colors p-1 pointer-events-auto" onclick="editFullTx('${r.txId}', '${r.sku}', '${r.time}', '${r.type}', ${r.qty}, '${r.name}')" title="Edit"><span class="material-symbols-outlined text-xl">edit</span></button>` : '';
+          let checkbox = canDelete ? `<input type="checkbox" class="tx-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer pointer-events-auto shrink-0" ${isChecked} onchange="toggleTxSelectionIdx(${idx}, this)">` : '';
+
+          let editBtn = canDelete ? `<button class="text-outline hover:text-primary transition-colors p-1 pointer-events-auto" onclick="editFullTx(${idx})" title="Edit"><span class="material-symbols-outlined text-xl">edit</span></button>` : '';
 
           return `
-          <div class="history-card relative bg-white border border-outline-variant rounded-2xl p-5 transition-shadow hover:shadow-md flex items-center gap-4">
+          <div class="history-card relative bg-white border border-outline-variant rounded-2xl p-3 md:p-5 transition-shadow hover:shadow-md flex items-center gap-3 md:gap-4">
             ${checkbox}
-            <div class="flex-1 flex items-start gap-4 justify-between min-w-0">
-               <div class="flex items-start gap-4 min-w-0 flex-1">
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${typeColorClass} border">
+            <div class="flex-1 flex items-start gap-3 md:gap-4 justify-between min-w-0">
+               <div class="flex items-start gap-3 md:gap-4 min-w-0 flex-1">
+                  <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ${typeColorClass} border">
                      <span class="material-symbols-outlined">${icon}</span>
                   </div>
                   <div class="flex-1 min-w-0">
-                     <h6 class="font-bold text-on-surface text-sm truncate pr-2">${r.sku}</h6>
-                     <p class="text-xs text-on-surface-variant mb-2 truncate" title="${r.name}">${r.name}</p>
-                     <div class="flex flex-wrap gap-2 items-center text-xs text-outline mb-1">
-                        <span class="badge-type ${typeColorClass} border">${r.type}</span>
+                     <h6 class="font-bold text-on-surface text-sm truncate pr-2">${escHtml(r.sku)}</h6>
+                     <p class="text-xs text-on-surface-variant mb-2 truncate" title="${escHtml(r.name)}">${escHtml(r.name)}</p>
+                     <div class="flex flex-wrap gap-x-2 gap-y-1 items-center text-xs text-outline mb-1">
+                        <span class="badge-type ${typeColorClass} border">${escHtml(r.type)}</span>
+                        ${routeBadge}
                         <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> ${new Date(r.time).toLocaleString()}</span>
-                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> ${r.user.split('@')[0]}</span>
+                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> ${escHtml(String(r.user || '').split('@')[0])}</span>
                      </div>
                      ${photoBadge}
                   </div>
                </div>
-               <div class="flex flex-col items-end justify-between h-12 shrink-0 pl-4 border-l border-outline-variant/30">
-                  <span class="${qtyColorClass} font-black text-lg mr-6">${qtySign}${r.qty}</span>
+               <div class="flex flex-col items-end justify-between h-12 shrink-0 pl-3 md:pl-4 border-l border-outline-variant/30">
+                  <span class="${qtyColorClass} font-black text-base md:text-lg md:mr-6">${qtySign}${r.qty}</span>
                   <div class="flex items-center">
                      ${editBtn}
                   </div>
@@ -2084,25 +2804,29 @@
     }
 
     let backgroundSyncTimer;
+    async function runBackgroundSync() {
+       if (!currentUser || getEl('mainApp').classList.contains('hidden')) return;
+       if (isSubmitting) return;
+       if (syncInFlight) return;
+       if (document.hidden) return;
+       if (Date.now() - lastManualSyncTime < 8000) return;
+
+       syncInFlight = true;
+       try {
+          const res = await fetchSyncPart('all', false, () => !isSubmitting && (Date.now() - lastManualSyncTime >= 8000));
+          if (res.liveChanged) renderActiveDataViews();
+       } catch (e) {
+       } finally {
+          syncInFlight = false;
+       }
+    }
+
     function startBackgroundSync() {
        if (backgroundSyncTimer) clearInterval(backgroundSyncTimer);
-       backgroundSyncTimer = setInterval(async () => {
-          if (!currentUser || getEl('mainApp').classList.contains('hidden')) return;
-          if (isSubmitting) return; 
-          if (Date.now() - lastManualSyncTime < 8000) return; 
-          
-          const res = await apiCall('getInitData', [], true);
-          if (Date.now() - lastManualSyncTime < 8000) return;
-          if(res && res.sys) {
-              globalData = res.sys;
-              if(res.stock) globalData.stock = res.stock;
-              if(res.history) globalData.history = res.history;
-              
-              if(getEl('viewDashboard').classList.contains('active')) renderStockSilent();
-              if(getEl('viewHistory').classList.contains('active')) renderHistorySilent();
-          }
-       }, 10000);
+       backgroundSyncTimer = setInterval(runBackgroundSync, 10000);
     }
+
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) runBackgroundSync(); });
   </script>
 </body>
 </html>
