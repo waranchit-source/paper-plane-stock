@@ -951,6 +951,17 @@
 
     function sleepMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
+    function isValidTxDate(value) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+        if (!m) return false;
+        const year = parseInt(m[1], 10);
+        return year >= 2000 && year <= 2100;
+    }
+
+    function invalidTxDateAlert() {
+        return Swal.fire({icon:'warning', title: currentLang==='en'?'Invalid Date':'วันที่ไม่ถูกต้อง', text: currentLang==='en'?'Please enter the date again (the year must be 4 digits, e.g. 2026).':'กรุณาระบุวันที่ใหม่อีกครั้ง (ปีต้องเป็น ค.ศ. 4 หลัก เช่น 2026)'});
+    }
+
     function apiErrorMessage(type, detail) {
         const en = currentLang === 'en';
         if (type === 'offline') return en ? 'No internet connection.' : 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต';
@@ -966,7 +977,7 @@
             return { ok: false, type: 'config', message: 'SCRIPT_URL is not set' };
         }
         const isGet = !!opts.isGet;
-        const timeoutMs = opts.timeout || (isGet ? 45000 : 90000);
+        const timeoutMs = opts.timeout || 90000;
         const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
         const timer = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
         try {
@@ -1897,6 +1908,7 @@
       if(!inCharge) return Swal.fire({icon:'warning', title: currentLang==='en'?'In Charge Required':'กรุณาระบุผู้รับผิดชอบ'});
       if(!invoiceNo) return Swal.fire({icon:'warning', title: currentLang==='en'?'Invoice Required':'กรุณากรอกเลขที่ Invoice'});
       if(!txDate) return Swal.fire({icon:'warning', title: currentLang==='en'?'Date Required':'กรุณาระบุวันที่รับของ'});
+      if(!isValidTxDate(txDate)) return invalidTxDateAlert();
 
       const inputs = document.querySelectorAll('.po-rcv-qty'); let payload = [];
       inputs.forEach(inp => {
@@ -2161,6 +2173,7 @@
 
       if(!inCharge) return Swal.fire({icon:'warning', title: currentLang==='en'?'In Charge Required':'กรุณาระบุผู้รับผิดชอบ'});
       if(!txDate) return Swal.fire({icon:'warning', title: currentLang==='en'?'Date Required':'กรุณาระบุวันที่ทำรายการ'});
+      if(!isValidTxDate(txDate)) return invalidTxDateAlert();
       if(requiresInvoice && (!getEl('actionInvoice').value.trim())) return Swal.fire({icon:'warning', title: currentLang==='en'?'Invoice Required':'กรุณากรอก Invoice'});
       if(isDeduction && !fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Origin Branch':'กรุณาระบุสาขาต้นทาง'});
       if(isAddition && !tb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Destination Branch':'กรุณาระบุสาขาปลายทาง'});
@@ -2315,6 +2328,7 @@
       const remark = getEl('countRemark').value || '-';
 
       if(!txDate) return Swal.fire({icon:'warning', title: currentLang==='en'?'Date Required':'กรุณาระบุวันที่ทำรายการ'});
+      if(!isValidTxDate(txDate)) return invalidTxDateAlert();
       if(!fb) return Swal.fire({icon:'warning', title: currentLang==='en'?'Select Branch':'กรุณาระบุสาขา (Branch)'});
       if(!inCharge) return Swal.fire({icon:'warning', title: currentLang==='en'?'In Charge Required':'กรุณาระบุผู้รับผิดชอบ'});
 
