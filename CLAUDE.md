@@ -52,6 +52,7 @@
 - ทุกครั้งที่เขียนข้อมูลสำเร็จต้องเรียก `invalidateLiveCache()`
 - `getInitData`, `getSystemData`, `getStockData`, `getRecentTransactions` ต้องคงรูปแบบผลลัพธ์เดิมไว้ เพราะหน้าเว็บรุ่นเก่าที่เปิดค้างอยู่ยังเรียกใช้
 - `onSheetChangeTrigger` ทำงานเมื่อมีคนแก้ช่องจำนวนในชีตโดยตรง และเรียก `applyStockAdjustments` เช่นกัน
+- สวิตช์ปิดการบันทึก (`PP_READONLY` ใน Script Properties): เมื่อเปิด `processBulkTransaction`, `uploadPhoto`, `deleteTransactions`, `editTransaction` ปฏิเสธทุกคำขอ (`readOnly: true`, `retryable: false`) ยกเว้นคำขอที่ `requestId` เป็น `DONE` แล้วยังตอบสำเร็จ (`duplicate`) `resolveSubmission`, การเข้าสู่ระบบ, การอ่านข้อมูล และ `onSheetChangeTrigger` ทำงานตามเดิม เปลี่ยนสวิตช์ด้วย `setRecordingLock(id, password, on)` เฉพาะ Admin (ตรวจรหัสผ่านกับแท็บ `Users` ผ่าน `loginUser`) ภายใต้ script lock ถ้าอ่านค่าสวิตช์ไม่ได้ถือว่าเปิดบันทึกได้
 
 **Frontend (`index.html`)**
 - การส่งรายการทั้งสามหน้า (PO, Scan & Action, Stock Count) ต้องผ่าน `safeSubmitTransaction` เท่านั้น
@@ -61,6 +62,7 @@
 - สิทธิ์ผู้ใช้ (Admin / Manager / User) และการกรองสาขาตามสิทธิ์ ตรวจที่หน้าเว็บ ห้ามทำให้หลวมลง
 - ข้อความที่มาจากข้อมูลในชีตต้องผ่าน `escHtml` ก่อนแทรกลง HTML
 - ตารางใช้ class `resp-wrap` / `resp-table` เพื่อเปลี่ยนเป็นการ์ดเมื่อพื้นที่แคบ ตารางใหม่ต้องใช้รูปแบบเดียวกัน
+- สวิตช์ปิดการบันทึก: `ppReadOnly` มาจาก `readOnly` ใน `getSyncData` (ทุก 10 วินาที) เมื่อปิด แสดงแถบ `readOnlyBanner` พร้อมลิงก์ระบบสต็อกใหม่ `safeSubmitTransaction` ไม่ส่งรายการ (หลังตรวจรายการค้างแล้ว) และลบ/แก้ไขใน Activity Log ไม่ได้ (`blockIfReadOnly`) เมนู "Recording: open/closed" (`navRecordingLock`, `toggleRecordingLock`) แสดงเฉพาะ Admin และต้องใส่รหัสผ่านทุกครั้ง
 - ถ้าเพิ่มไอคอน Material Symbols ตัวใหม่ ต้องเพิ่มชื่อไอคอนในพารามิเตอร์ `icon_names` ของลิงก์ฟอนต์ใน `<head>` (เรียงตามตัวอักษร) ไม่อย่างนั้นไอคอนจะแสดงเป็นข้อความ
 
 ## แคชฝั่งเซิร์ฟเวอร์
@@ -87,6 +89,14 @@
 5. หลังแก้ Apps Script ทุกครั้ง อัปเดต `Code.gs` ใน repo GitHub ให้ตรงกัน
 
 ## บันทึกการแก้ไข
+
+### 2026-10-24: สวิตช์ปิดการบันทึก (เตรียมย้ายไประบบสต็อกใหม่)
+
+- ผู้ใช้ต้องการปุ่มที่ Admin เปิด/ปิดการบันทึกของระบบเดิมเองได้ตลอด เพราะยังต้องใช้ระบบเดิมคู่กับระบบใหม่จนกว่าระบบใหม่จะพร้อม 100%
+- `Code.gs`: เพิ่ม `ppReadOnlyState`, `ppReadOnlyMessage`, `setRecordingLock` (action `setRecordingLock` ใน `doPost`) และตัวกันใน 4 ฟังก์ชันเขียนข้อมูล `getSyncData` เพิ่มคีย์ `readOnly`, `getInitData` เพิ่มฟิลด์ `readOnly`, `healthCheck` เพิ่ม `readOnly` (ฟิลด์เดิมไม่เปลี่ยน หน้าเว็บรุ่นเก่าใช้ได้ต่อ และถูกกันที่เซิร์ฟเวอร์)
+- `index.html`: แถบแจ้งปิดการบันทึก, เมนู Admin "Recording: open/closed" (ไอคอน `lock`, `lock_open`), กันส่ง/ลบ/แก้ไขที่หน้าเว็บ
+- ทดสอบด้วยตัวจำลอง Node 39 ข้อ (เปิด/ปิด, รหัสผิด, User/Manager เปลี่ยนไม่ได้, lock ไม่ว่าง, ส่งซ้ำ requestId เดิมหลังปิด, หน้าเว็บรุ่นเก่าที่ส่ง photoBase64, ตัดสต็อกล้มกลางทาง, อัปโหลดรูปไม่สำเร็จ) และในเบราว์เซอร์ที่ 360, 768, 1024, 1366 px หน้า Activity Log ที่ 360 px เลื่อนซ้ายขวาได้ 10 px จากแถบเลือกรายการด้านล่าง ซึ่งมีอยู่แล้วในฉบับก่อนแก้ ไม่ได้แก้
+- ฉบับก่อนแก้: `backup/Code.2026-10-23.gs`, `backup/index.2026-10-23.html`
 
 ### 2026-10-02: Timestamp ว่างใน Outbound หลายบรรทัด
 

@@ -7,7 +7,7 @@
   
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&icon_names=arrow_downward,arrow_upward,barcode_scanner,calendar_today,check_circle,close,delete,done_all,edit,error,fact_check,flight_takeoff,history,image,input,inventory_2,logout,menu,person,person_add,photo_camera,qr_code_scanner,refresh,search,send,sync,sync_alt,visibility,visibility_off&display=block" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&icon_names=arrow_downward,arrow_upward,barcode_scanner,calendar_today,check_circle,close,delete,done_all,edit,error,fact_check,flight_takeoff,history,image,input,inventory_2,lock,lock_open,logout,menu,person,person_add,photo_camera,qr_code_scanner,refresh,search,send,sync,sync_alt,visibility,visibility_off&display=block" rel="stylesheet"/>
   
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
@@ -250,6 +250,10 @@
         <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon">history</span>
         <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" data-i18n="historyTitle">Activity Log</span>
       </a>
+      <a id="navRecordingLock" class="flex items-center gap-4 px-3 py-3 rounded-xl mb-1 text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer group" style="display: none;" onclick="toggleRecordingLock()" title="Recording lock">
+        <span class="material-symbols-outlined shrink-0 mx-auto sidebar-icon" id="navRecordingLockIcon">lock_open</span>
+        <span class="sidebar-text font-body-md font-semibold whitespace-nowrap opacity-0 w-0 hidden" id="navRecordingLockText">Recording: open</span>
+      </a>
     </nav>
     
     <div class="mt-auto m-3 p-3 rounded-2xl bg-surface border border-outline-variant/50 shadow-sm flex items-center gap-3 overflow-hidden" id="sidebarProfile">
@@ -288,6 +292,11 @@
         <button class="px-2 py-1.5 rounded-lg font-bold text-sm transition-colors text-on-surface-variant hover:bg-surface-container lang-toggle" onclick="setLang('th')" id="btnTh">TH</button>
       </div>
     </header>
+
+    <div id="readOnlyBanner" class="mx-4 md:mx-8 mt-4 rounded-xl border border-error/30 bg-error/10 text-error px-4 py-3 text-sm font-semibold flex items-start gap-2" style="display: none;">
+      <span class="material-symbols-outlined text-[20px] shrink-0">lock</span>
+      <span id="readOnlyBannerText" class="min-w-0 break-words"></span>
+    </div>
 
     <div class="p-4 md:p-6 lg:p-8 flex-1 space-y-6 max-w-7xl mx-auto w-full">
 
@@ -702,7 +711,9 @@
     let lastManualSyncTime = 0;
     let isSidebarOpen = window.innerWidth >= 768;
     let currentPOPhotoIdx = -1;
-    let selectedTxs = new Set(); 
+    let selectedTxs = new Set();
+    const NEW_STOCK_URL = 'https://stock.paperplanebkk.workers.dev';
+    let ppReadOnly = { on: false, by: '', at: '' };
 
     const getEl = id => document.getElementById(id);
     const setHtml = (id, html) => { const el = getEl(id); if (el) el.innerHTML = html; };
@@ -725,6 +736,71 @@
     function isUserManager() {
        if (!currentUser) return false;
        return String(currentUser.role).toUpperCase() === 'MANAGER';
+    }
+
+    function readOnlyMessage() {
+       return currentLang === 'en'
+          ? 'Recording in this old stock system is closed. Nothing was saved. Please use the new stock system: ' + NEW_STOCK_URL
+          : 'ระบบสต็อกเดิมปิดการบันทึกแล้ว รายการนี้ยังไม่ถูกบันทึก กรุณาใช้ระบบสต็อกใหม่ ' + NEW_STOCK_URL;
+    }
+
+    function applyReadOnly(ro) {
+       if (!ro || typeof ro !== 'object') return;
+       ppReadOnly = { on: ro.on === true, by: String(ro.by || ''), at: String(ro.at || '') };
+       renderReadOnlyState();
+    }
+
+    function renderReadOnlyState() {
+       const en = currentLang === 'en';
+       const banner = getEl('readOnlyBanner');
+       if (banner) banner.style.display = ppReadOnly.on ? 'flex' : 'none';
+       setHtml('readOnlyBannerText', ppReadOnly.on
+          ? escHtml(en ? 'Recording in this system is closed. You can still view stock and history. Please record in the new stock system: ' : 'ระบบนี้ปิดการบันทึกแล้ว ยังดูสต็อกและประวัติได้ตามเดิม กรุณาบันทึกรายการในระบบสต็อกใหม่ ') + `<a href="${NEW_STOCK_URL}" target="_blank" rel="noopener" class="underline">${NEW_STOCK_URL}</a>`
+          : '');
+       const nav = getEl('navRecordingLock');
+       if (nav) nav.style.display = isUserAdmin() ? 'flex' : 'none';
+       const icon = getEl('navRecordingLockIcon');
+       if (icon) icon.innerText = ppReadOnly.on ? 'lock' : 'lock_open';
+       const txt = getEl('navRecordingLockText');
+       if (txt) txt.innerText = ppReadOnly.on ? (en ? 'Recording: closed' : 'การบันทึก: ปิดอยู่') : (en ? 'Recording: open' : 'การบันทึก: เปิดอยู่');
+       if (nav) nav.title = ppReadOnly.on ? (en ? 'Recording is closed (click to open)' : 'ปิดการบันทึกอยู่ (กดเพื่อเปิด)') : (en ? 'Recording is open (click to close)' : 'เปิดการบันทึกอยู่ (กดเพื่อปิด)');
+    }
+
+    function blockIfReadOnly() {
+       if (!ppReadOnly.on) return false;
+       Swal.fire({ icon: 'info', title: currentLang === 'en' ? 'Recording is closed' : 'ปิดการบันทึกแล้ว', text: currentLang === 'en' ? 'Recording in this old stock system is closed. Nothing was changed. Please use the new stock system: ' + NEW_STOCK_URL : 'ระบบสต็อกเดิมปิดการบันทึกแล้ว ไม่มีข้อมูลใดถูกเปลี่ยน กรุณาใช้ระบบสต็อกใหม่ ' + NEW_STOCK_URL });
+       return true;
+    }
+
+    async function toggleRecordingLock() {
+       if (!isUserAdmin() || isSubmitting) return;
+       const en = currentLang === 'en';
+       const turnOn = !ppReadOnly.on;
+       const ask = await Swal.fire({
+          icon: 'warning',
+          title: turnOn ? (en ? 'Close recording in this system?' : 'ปิดการบันทึกในระบบนี้?') : (en ? 'Open recording again?' : 'เปิดการบันทึกอีกครั้ง?'),
+          text: turnOn
+             ? (en ? 'Nobody can save, edit or delete transactions in this system until you open it again. Viewing stock and history still works.' : 'ทุกคนจะบันทึก แก้ไข หรือลบรายการในระบบนี้ไม่ได้ จนกว่าจะเปิดอีกครั้ง ยังดูสต็อกและประวัติได้ตามเดิม')
+             : (en ? 'Everyone can save transactions in this system again.' : 'ทุกคนจะกลับมาบันทึกรายการในระบบนี้ได้ตามเดิม'),
+          input: 'password',
+          inputLabel: en ? 'Confirm with your password' : 'ยืนยันด้วยรหัสผ่านของคุณ',
+          inputAttributes: { autocomplete: 'current-password' },
+          showCancelButton: true,
+          confirmButtonColor: turnOn ? '#ba1a1a' : '#3525cd',
+          cancelButtonColor: '#777587',
+          confirmButtonText: turnOn ? (en ? 'Close recording' : 'ปิดการบันทึก') : (en ? 'Open recording' : 'เปิดการบันทึก'),
+          cancelButtonText: en ? 'Cancel' : 'ยกเลิก',
+          inputValidator: v => v ? undefined : (en ? 'Please enter your password' : 'กรุณาใส่รหัสผ่าน')
+       });
+       if (!ask.isConfirmed) return;
+       showLoading();
+       const r = await apiRequest('setRecordingLock', [currentUser.id, ask.value, turnOn], { timeout: 45000 });
+       if (r.ok && r.data && r.data.success) {
+          applyReadOnly(r.data.state);
+          Swal.fire({ icon: 'success', title: ppReadOnly.on ? (en ? 'Recording closed' : 'ปิดการบันทึกแล้ว') : (en ? 'Recording opened' : 'เปิดการบันทึกแล้ว'), showConfirmButton: false, timer: 1800 });
+       } else {
+          Swal.fire({ icon: 'error', title: en ? 'Not changed' : 'ยังไม่ได้เปลี่ยน', text: (en ? 'Cause: ' : 'สาเหตุ: ') + (r.ok ? ((r.data && r.data.message) || '-') : r.message) + (r.ok ? '' : (en ? ' Press Refresh to see the current status.' : ' กด Refresh เพื่อดูสถานะล่าสุด')) });
+       }
     }
 
     function setStorageData(key, value) {
@@ -1127,6 +1203,8 @@
             }
         }
 
+        if (ppReadOnly.on) return { success: false, message: readOnlyMessage() };
+
         const up = await uploadPendingPhotos(cfg.items);
         if (cfg.onPhotosUploaded) { try { cfg.onPhotosUploaded(); } catch (e) {} }
         if (!up.ok) return { success: false, message: up.message };
@@ -1379,6 +1457,7 @@
       renderCountItems();
       if(currentUser) toggleActionFields();
       updateTopBarTitle();
+      renderReadOnlyState();
     }
 
     function updateTopBarTitle() {
@@ -1441,6 +1520,7 @@
           return out;
        }
        out.ok = true;
+       applyReadOnly(r.data.readOnly);
        if (guard && !guard()) return out;
        const d = r.data;
        if (d.static && d.static.data && sSeq > staticSeqApplied) {
@@ -1654,8 +1734,9 @@
       if (auth) setStorageData('ppPrefill', auth);
 
       removeStorageData('ppUser_local'); removeStorageData('ppAuth'); sessionStorage.removeItem('ppUser_session');
-      currentUser = null; 
-      
+      currentUser = null;
+      renderReadOnlyState();
+
       getEl('mainApp').classList.add('hidden');
       getEl('mainApp').classList.remove('flex');
       getEl('mainApp').style.marginLeft = '0';
@@ -1707,6 +1788,7 @@
       loadActionDraft();
       loadCountDraft();
       toggleActionFields();
+      renderReadOnlyState();
       startBackgroundSync();
       switchTab('viewInbound', document.querySelector('.desktop-sidebar .nav-item-btn'));
       resolvePendingOnLoad();
@@ -2440,6 +2522,7 @@
 
     async function deleteSelectedTx() {
        if(selectedTxs.size === 0) return;
+       if (blockIfReadOnly()) return;
        Swal.fire({
           title: currentLang === 'en' ? 'Delete Selected?' : 'ต้องการลบรายการที่เลือก?',
           text: currentLang === 'en' ? 'Stock will be reversed automatically.' : 'สต็อกจะถูกดึงกลับคืนอัตโนมัติ',
@@ -2464,6 +2547,7 @@
     }
 
     async function editTxQty(txId, sku, currentQty) {
+        if (blockIfReadOnly()) return;
         Swal.fire({
             title: currentLang === 'en' ? 'Edit Quantity' : 'แก้ไขจำนวน',
             input: 'number',
@@ -2564,6 +2648,7 @@
     async function editFullTx(idx) {
         const r = currentHistoryView[idx];
         if (!r) return;
+        if (blockIfReadOnly()) return;
         const txId = r.txId;
         const oldSku = r.sku;
         const currentType = r.type;

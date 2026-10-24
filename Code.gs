@@ -30,6 +30,7 @@ function doPost(e) {
     else if (action === 'resolveSubmission') result = resolveSubmission(args[0]);
     else if (action === 'deleteTransactions') result = deleteTransactions(args[0]);
     else if (action === 'editTransaction') result = editTransaction(args[0], args[1]);
+    else if (action === 'setRecordingLock') result = setRecordingLock(args[0], args[1], args[2]);
   } catch (err) {
     result = { success: false, message: err.toString() };
   }
@@ -97,6 +98,44 @@ function ppTimeFromTxId(txId) {
   if (!m) return '';
   if (parseInt(m[2], 10) < 1 || parseInt(m[2], 10) > 12 || parseInt(m[3], 10) < 1 || parseInt(m[3], 10) > 31 || parseInt(m[4], 10) > 23 || parseInt(m[5], 10) > 59 || parseInt(m[6], 10) > 59) return '';
   return parseInt(m[2], 10) + '/' + parseInt(m[3], 10) + '/' + m[1] + ' ' + parseInt(m[4], 10) + ':' + m[5] + ':' + m[6];
+}
+
+var PP_READONLY_KEY = 'PP_READONLY';
+var PP_NEW_STOCK_URL = 'https://stock.paperplanebkk.workers.dev';
+
+function ppReadOnlyState() {
+  try {
+    var raw = PropertiesService.getScriptProperties().getProperty(PP_READONLY_KEY);
+    if (!raw) return { on: false, by: '', at: '' };
+    var s = JSON.parse(raw);
+    return { on: s.on === true, by: String(s.by || ''), at: String(s.at || '') };
+  } catch (err) {
+    return { on: false, by: '', at: '' };
+  }
+}
+
+function ppReadOnlyMessage() {
+  return 'ระบบสต็อกเดิมปิดการบันทึกแล้ว รายการนี้ยังไม่ถูกบันทึก กรุณาใช้ระบบสต็อกใหม่ ' + PP_NEW_STOCK_URL;
+}
+
+function setRecordingLock(id, password, on) {
+  var auth = loginUser(id, password);
+  if (!auth || !auth.success) return { success: false, message: (auth && auth.message) || 'ยืนยันตัวตนไม่สำเร็จ' };
+  if (String(auth.user.role).toUpperCase() !== 'ADMIN') return { success: false, message: 'เฉพาะ Admin เท่านั้นที่เปิด/ปิดการบันทึกได้' };
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+  } catch (lockErr) {
+    return { success: false, message: 'ระบบกำลังบันทึกรายการอื่นอยู่ กรุณาลองใหม่อีกครั้ง' };
+  }
+  try {
+    PropertiesService.getScriptProperties().setProperty(PP_READONLY_KEY, JSON.stringify({ on: on === true, by: String(auth.user.id), at: new Date().toISOString() }));
+    return { success: true, state: ppReadOnlyState() };
+  } catch (e) {
+    return { success: false, message: e.message || e.toString() };
+  } finally {
+    try { lock.releaseLock(); } catch (err) {}
+  }
 }
 
 function registerUser(id, password, fname, lname, branch) {
@@ -289,7 +328,8 @@ function getInitData() {
     return {
       sys: { branches: st.branches, inCharges: st.inCharges, skus: st.skus, pos: lv.pos, poReceives: lv.poReceives },
       stock: lv.stock,
-      history: lv.history
+      history: lv.history,
+      readOnly: ppReadOnlyState()
     };
   } catch(e) {
     return null;
@@ -301,6 +341,7 @@ function getSyncData(part, staticVer, liveVer, force) {
   var out = [];
   if (part !== 'live') out.push('"static":' + getCachedPart('PP_STATIC', staticVer, isForce, 120, buildStaticData));
   if (part !== 'static') out.push('"live":' + getCachedPart('PP_LIVE', liveVer, isForce, 20, buildLiveData));
+  out.push('"readOnly":' + JSON.stringify(ppReadOnlyState()));
   return '{' + out.join(',') + '}';
 }
 
@@ -400,6 +441,7 @@ function healthCheck() {
     PropertiesService.getScriptProperties().getProperty('PP_HEALTH');
     out.props = true;
   } catch (err) { out.propsError = err.toString(); }
+  out.readOnly = ppReadOnlyState().on;
   return out;
 }
 
@@ -491,6 +533,7 @@ function uploadToDrive(base64Data, filename) {
 }
 
 function uploadPhoto(base64Data, filename) {
+  if (ppReadOnlyState().on) return { success: false, readOnly: true, message: ppReadOnlyMessage() };
   if (!base64Data) return { success: false, message: 'ไม่พบข้อมูลรูปภาพ' };
   var ts = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
   var safeName = String(filename || 'TXN').replace(/[\\\/:*?"<>|\s]/g, '_');
@@ -526,6 +569,13 @@ function processBulkTransaction(type, docRef, invoiceNo, remark, items, targetBr
   var lock = LockService.getScriptLock();
   var hasLock = false;
   try {
+    if (ppReadOnlyState().on) {
+      if (requestId) {
+        var roState = getRequestState(requestId);
+        if (roState.indexOf('DONE') === 0) return { success: true, duplicate: true, txId: roState.split(':')[1] || '' };
+      }
+      return { success: false, readOnly: true, retryable: false, partial: false, message: ppReadOnlyMessage() };
+    }
     if (!items || !items.length) throw ppError('ไม่มีรายการสินค้าในคำขอ', false);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var txSheet = ss.getSheetByName('Inventory_Transaction');
@@ -560,6 +610,7 @@ function processBulkTransaction(type, docRef, invoiceNo, remark, items, targetBr
       if (state.indexOf('DONE') === 0) return { success: true, duplicate: true, txId: state.split(':')[1] || '' };
       if (state === 'CANCELLED') return { success: false, cancelled: true, retryable: true, message: 'คำขอนี้ถูกยกเลิกไปแล้ว รายการยังไม่ถูกบันทึก กรุณากดยืนยันใหม่อีกครั้ง' };
     }
+    if (ppReadOnlyState().on) return { success: false, readOnly: true, retryable: false, partial: false, message: ppReadOnlyMessage() };
 
     var commonTxId = 'TXN' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMddHHmmss") + '_' + Math.floor(Math.random() * 1000);
     var stockAdjustments = [];
@@ -632,6 +683,7 @@ function deleteTransactions(targets) {
     } catch (lockErr) {
       throw new Error('ระบบกำลังบันทึกรายการอื่นอยู่ ยังไม่ได้ลบรายการ กรุณาลองใหม่อีกครั้ง');
     }
+    if (ppReadOnlyState().on) return { success: false, readOnly: true, message: 'ระบบสต็อกเดิมปิดการบันทึกแล้ว ยังไม่ได้ลบรายการ กรุณาใช้ระบบสต็อกใหม่ ' + PP_NEW_STOCK_URL };
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var txSheet = ss.getSheetByName('Inventory_Transaction');
     var txData = txSheet.getDataRange().getValues();
@@ -702,6 +754,7 @@ function editTransaction(target, newData) {
     } catch (lockErr) {
       throw new Error('ระบบกำลังบันทึกรายการอื่นอยู่ ยังไม่ได้แก้ไขรายการ กรุณาลองใหม่อีกครั้ง');
     }
+    if (ppReadOnlyState().on) return { success: false, readOnly: true, message: 'ระบบสต็อกเดิมปิดการบันทึกแล้ว ยังไม่ได้แก้ไขรายการ กรุณาใช้ระบบสต็อกใหม่ ' + PP_NEW_STOCK_URL };
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var txSheet = ss.getSheetByName('Inventory_Transaction');
     var txData = txSheet.getDataRange().getValues();
